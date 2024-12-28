@@ -535,23 +535,23 @@ random_password() {
     sleep 5
   done
   local PASS=$(grep " Admin password: " ${CloudreveBaseDir}/admin.account | awk '{print $6}')
-  while [ -z $(sqlite3 "$DB_FILE" "SELECT password FROM users WHERE group_id = 1;") ]; do
+  local encrypted_pass=$(sqlite3 "$DB_FILE" "SELECT password FROM users WHERE group_id = 1;")
+  while [ -z $encrypted_pass ]; do
+    encrypted_pass=$(sqlite3 "$DB_FILE" "SELECT password FROM users WHERE group_id = 1;")
     echo_date "ℹ️新密码还未写入数据库, 等待5s..."
     sleep 5
   done
-  local encrypted_pass=$(sqlite3 "$DB_FILE" "SELECT password FROM users WHERE group_id = 1;")
-  stop_process >/dev/null 2>&1
-  mv -f "${DB_FILE}.bak" "${DB_FILE}"
-  sqlite3 $DB_FILE "UPDATE users SET password = '$encrypted_pass' WHERE group_id = 1;"
-  if [ -n "${USER}" -a -n "${PASS}" ]; then
+  killall cloudreve
+  sqlite3 "${DB_FILE}.bak" "UPDATE users SET password = '$encrypted_pass' WHERE group_id = 1;"
+  if [ -n "${USER}" -a -n "${PASS}" -a -n "${encrypted_pass}" ]; then
     echo_date "---------------------------------"
     echo_date "😛cloudreve面板用户: ${USER}"
     echo_date "🔑cloudreve面板密码: ${PASS}"
     echo_date "---------------------------------"
   else
-    echo_date "⚠️面板账号密码获取失败!请重启路由后重试!"
+    echo_date "⚠️面板账号密码获取失败!请重新生成!"
   fi
-
+  mv -f "${DB_FILE}.bak" "${DB_FILE}"
   # 3. 重启进程
   start >/dev/null 2>&1
   echo_date "✅重启成功!"
