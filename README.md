@@ -16,7 +16,7 @@ Cloudreve 可以让您快速搭建起公私兼备的网盘系统。Cloudreve 在
 官方文档: <https://docs.cloudreve.org>
 
 ## 软件中心面板展示
-![](https://foruda.gitee.com/images/1735299905566195561/3bc091ff_14243051.png)
+![](https://foruda.gitee.com/images/1735376775202607416/239abf62_14243051.png)
 
 ## 机型支持
 在 asuswrt 为基础的固件上, cloudreve 插件目前仅支持 aarch64 架构的路由器, 具体如下:
