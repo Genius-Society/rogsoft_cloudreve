@@ -162,7 +162,7 @@
 			if (dbus["cloudreve_enable"] == "1") {
 				port = dbus["cloudreve_port"];
 				protocol = 'http:';
-				if (dbus['cloudreve_https'] == '1') {
+				if (dbus['cloudreve_https'] == '1' && dbus['cloudreve_publicswitch'] == '1') {
 					port = dbus["cloudreve_https_port"];
 					protocol = 'https:';
 				}
@@ -570,7 +570,7 @@
 				_caption = "运行状态";
 			}
 			if (itemNum == 3) {
-				statusmenu = "!!!请注意: 不允许查看密码, 只能重新生成!<br/><br/>"
+				statusmenu = "!!!请注意: 不允许查看密码, 只能重新生成! 若修改后未生效可重试。<br/><br/>"
 				statusmenu += "&nbsp;&nbsp;&nbsp;&nbsp;点击【重置密码】可以重新生成当前面板的账号和密码, 请注意: 如果你需要配置webdav, 同样应该使用此用户名和密码。<br/><br/>"
 				statusmenu += "&nbsp;&nbsp;&nbsp;&nbsp;点击【cloudreve运行日志】可以实时查看cloudreve程序的运行情况。"
 				_caption = "信息获取";

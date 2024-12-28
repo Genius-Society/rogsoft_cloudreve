@@ -380,16 +380,16 @@ start() {
     rm -rf "${CloudreveBaseDir}/admin.account"
     nohup "${CloudreveBaseDir}/cloudreve" >"${CloudreveBaseDir}/admin.account" 2>&1 &
     if [ ! -f "${CloudreveBaseDir}/conf.ini" ]; then
-      echo_date "ℹ️检测到conf.ini缺失, 通过启动cloudreve自动生成..."
+      echo_date "ℹ️检测到 conf.ini 缺失, 通过启动 cloudreve 自动生成..."
       while [ ! -f "${CloudreveBaseDir}/conf.ini" ]; do
-        echo_date "ℹ️等1s待conf.ini文件生成..."
+        echo_date "ℹ️等 1s 待 conf.ini 文件生成..."
         sleep 1
       done
     fi
     if [ ! -f "${CloudreveBaseDir}/cloudreve.db" ]; then
       echo_date "ℹ️检测到首次启动插件, 生成用户和密码..."
       while [ ! -f "${CloudreveBaseDir}/admin.account" ] || ! grep -q "Admin password: " "${CloudreveBaseDir}/admin.account"; do
-        echo_date "ℹ️未检测到Admin password, 等待5s..."
+        echo_date "ℹ️未检测到 Admin password, 等待 5s..."
         sleep 5
       done
       local USER=$(grep " Admin user name: " ${CloudreveBaseDir}/admin.account | awk '{print $7}')
@@ -460,7 +460,7 @@ open_port() {
   local CM=$(lsmod | grep xt_comment)
   local OS=$(uname -r)
   if [ -z "${CM}" -a -f "/lib/modules/${OS}/kernel/net/netfilter/xt_comment.ko" ]; then
-    echo_date "ℹ️加载xt_comment.ko内核模块!"
+    echo_date "ℹ️加载 xt_comment.ko 内核模块!"
     insmod /lib/modules/${OS}/kernel/net/netfilter/xt_comment.ko
   fi
 
@@ -531,16 +531,16 @@ random_password() {
   nohup "${CloudreveBaseDir}/cloudreve" >"${CloudreveBaseDir}/admin.account" 2>&1 &
 
   while [ ! -f "${CloudreveBaseDir}/admin.account" ] || ! grep -q "Admin password: " "${CloudreveBaseDir}/admin.account"; do
-    echo_date "ℹ️未检测到Admin password, 等待5s..."
+    echo_date "ℹ️未检测到 Admin password, 等待5s..."
     sleep 5
   done
   local PASS=$(grep " Admin password: " ${CloudreveBaseDir}/admin.account | awk '{print $6}')
-
   while [ -z $(sqlite3 "$DB_FILE" "SELECT password FROM users WHERE group_id = 1;") ]; do
-    echo_date "ℹ️密码还未写入数据库, 等待5s..."
+    echo_date "ℹ️新密码还未写入数据库, 等待5s..."
     sleep 5
   done
   local encrypted_pass=$(sqlite3 "$DB_FILE" "SELECT password FROM users WHERE group_id = 1;")
+  stop_process >/dev/null 2>&1
   mv -f "${DB_FILE}.bak" "${DB_FILE}"
   sqlite3 $DB_FILE "UPDATE users SET password = '$encrypted_pass' WHERE group_id = 1;"
   if [ -n "${USER}" -a -n "${PASS}" ]; then
@@ -633,7 +633,7 @@ web_submit)
     dbus set cloudreve_enable=1
     random_password | tee -a ${LOG_FILE}
   else
-    echo_date "ℹ️停止cloudreve!" | tee -a ${LOG_FILE}
+    echo_date "ℹ️停止 cloudreve!" | tee -a ${LOG_FILE}
     stop_plugin | tee -a ${LOG_FILE}
   fi
   echo XU6J03M16 | tee -a ${LOG_FILE}
