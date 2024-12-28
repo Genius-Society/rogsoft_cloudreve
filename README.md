@@ -6,23 +6,23 @@ Cloudreve 网盘的 Koolcenter 软件中心插件版本
 
 ![](https://foruda.gitee.com/images/1735299905497917561/45f32785_14243051.png)
 
-## Cloudreve 是什么？
-Cloudreve 可以让您快速搭建起公私兼备的网盘系统。Cloudreve 在底层支持不同的云存储平台，用户在实际使用时无须关心物理存储方式。你可以使用 Cloudreve 搭建个人用网盘、文件分享系统，亦或是针对大小团体的公有云系统。
+## Cloudreve 是什么?
+Cloudreve 可以让您快速搭建起公私兼备的网盘系统。Cloudreve 在底层支持不同的云存储平台, 用户在实际使用时无须关心物理存储方式。你可以使用 Cloudreve 搭建个人用网盘、文件分享系统, 亦或是针对大小团体的公有云系统。
 
 ## 项目地址
 <https://github.com/cloudreve/Cloudreve>
 
 ## 官方信息
-官方文档 <https://docs.cloudreve.org>
+官方文档: <https://docs.cloudreve.org>
 
 ## 软件中心面板展示
 ![](https://foruda.gitee.com/images/1735299905566195561/3bc091ff_14243051.png)
 
 ## 机型支持
-在asuswrt为基础的固件上，cloudreve插件目前仅支持aarch64架构的路由器，具体如下：
+在 asuswrt 为基础的固件上, cloudreve 插件目前仅支持 aarch64 架构的路由器, 具体如下:
 
-- 部分及其未列出，请根据CPU型号和支持软件中心与否自行判断
-- 使用cloudreve建议配置1G及以上的虚拟内存，特别是小内存的路由器
+- 部分及其未列出, 请根据 CPU 型号和支持软件中心与否自行判断
+- 使用 cloudreve 建议配置 1G 及以上的虚拟内存, 特别是小内存的路由器
 
 | 机型             | 内存  | CPU/SOC | 架构  | 核心  |  频率   | 插件支持 |
 | :--------------- | :---- | :-----: | :---: | :---: | :-----: | :------: |
