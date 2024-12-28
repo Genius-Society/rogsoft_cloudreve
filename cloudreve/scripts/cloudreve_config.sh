@@ -12,7 +12,6 @@ CloudreveBaseDir=$(dbus get cloudreve_old_dir)
 configPort=5212
 configHttpsPort=5213
 configDisableHttp=false
-# configForceHttps=false
 configHttps=false
 configCertFile=''
 configKeyFile=''
@@ -150,16 +149,6 @@ makeConfig() {
     configHttpsPort=${cloudreve_https_port}
   fi
 
-  #初始化强制跳转https
-  # if [ $(number_test ${cloudreve_force_https}) != "0" ]; then
-  #   dbus set cloudreve_force_https="0"
-  # fi
-
-  #初始化强制跳转https
-  # if [ $(number_test ${cloudreve_force_https}) != "0" ]; then
-  #   dbus set cloudreve_force_https="0"
-  # fi
-
   # 初始化https, 条件:
   # 1. 必须要开启公网访问
   # 2. https开关要打开
@@ -236,11 +225,6 @@ makeConfig() {
       configHttps=false
       configHttpsPort="-1"
       echo_date "⚠️ Cloudreve 管理面板http和https端口相同, 本次启动关闭https!"
-    # else
-    #   if [ "${cloudreve_force_https}" == "1" ]; then
-    #     echo_date "🆗 Cloudreve 管理面板已开启强制跳转https。"
-    #     configForceHttps=true
-    #   fi
     fi
   else
     configHttpsPort="-1"
