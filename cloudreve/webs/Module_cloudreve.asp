@@ -106,8 +106,22 @@
 		var _responseLen;
 		var STATUS_FLAG;
 		var noChange = 0;
-		var params_check = ['cloudreve_https', 'cloudreve_publicswitch', 'cloudreve_disablecheck', 'cloudreve_watchdog', 'cloudreve_force_https', 'cloudreve_open_http_port', 'cloudreve_open_https_port'];
-		var params_input = ['cloudreve_work_dir', 'cloudreve_cert_file', 'cloudreve_key_file', 'cloudreve_port', 'cloudreve_watchdog_time', 'cloudreve_https_port'];
+		var params_check = [
+			'cloudreve_https',
+			'cloudreve_publicswitch',
+			'cloudreve_disablecheck',
+			'cloudreve_watchdog',
+			'cloudreve_open_http_port',
+			'cloudreve_open_https_port'
+		];
+		var params_input = [
+			'cloudreve_work_dir',
+			'cloudreve_cert_file',
+			'cloudreve_key_file',
+			'cloudreve_port',
+			'cloudreve_watchdog_time',
+			'cloudreve_https_port'
+		];
 
 		String.prototype.myReplace = function (f, e) {
 			var reg = new RegExp(f, "g");
@@ -305,7 +319,7 @@
 				E("cl_cert").style.display = "none";
 				E("cl_key").style.display = "none";
 				E("cl_https_port").style.display = "none";
-				E("cl_force_https").style.display = "none";
+				// E("cl_force_https").style.display = "none";
 				E("cl_open_http_port").style.display = "none";
 				E("cl_open_https_port").style.display = "none";
 			} else {
@@ -315,13 +329,13 @@
 					E("cl_cert").style.display = "none";
 					E("cl_key").style.display = "none";
 					E("cl_https_port").style.display = "none";
-					E("cl_force_https").style.display = "none";
+					// E("cl_force_https").style.display = "none";
 					E("cl_open_https_port").style.display = "none";
 				} else {
 					E("cl_cert").style.display = "";
 					E("cl_key").style.display = "";
 					E("cl_https_port").style.display = "";
-					E("cl_force_https").style.display = "";
+					// E("cl_force_https").style.display = "";
 					E("cl_open_https_port").style.display = "";
 				}
 			}
@@ -897,13 +911,13 @@
 														<input type="text" id="cloudreve_https_port"
 															style="width: 50px;" maxlength="5" class="input_3_table"
 															autocorrect="off" autocapitalize="off"
-															style="background-color: rgb(89, 110, 116);">
+															style="background-color: rgb(89, 110, 116);" value="5213">
 														<span id="cl_open_https_port"><input type="checkbox"
 																id="cloudreve_open_https_port"
 																style="vertical-align:middle;;margin-left:50px;">开放公网端口</span>
 													</td>
 												</tr>
-												<tr id="cl_force_https">
+												<!-- <tr id="cl_force_https">
 													<th><a onmouseover="mOver(this, 9)" onmouseout="mOut(this)"
 															class="hintstyle" href="javascript:void(0);">强制跳转https</a>
 													</th>
@@ -911,7 +925,7 @@
 														<input type="checkbox" id="cloudreve_force_https"
 															style="vertical-align:middle;" />
 													</td>
-												</tr>
+												</tr> -->
 												<tr id="cl_cert">
 													<th>证书公钥Cert文件 (绝对路径)</th>
 													<td>

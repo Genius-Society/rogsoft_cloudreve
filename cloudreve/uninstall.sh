@@ -19,7 +19,7 @@ dbus remove cloudreve_binver
 dbus remove cloudreve_cert_file
 dbus remove cloudreve_disablecheck
 dbus remove cloudreve_enable
-dbus remove cloudreve_force_https
+# dbus remove cloudreve_force_https
 dbus remove cloudreve_https
 dbus remove cloudreve_https_port
 dbus remove cloudreve_key_file
