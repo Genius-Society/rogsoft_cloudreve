@@ -27,8 +27,15 @@ dbus remove cloudreve_open_http_port
 dbus remove cloudreve_open_https_port
 dbus remove cloudreve_port
 dbus remove cloudreve_publicswitch
-dbus remove cloudreve_version
 dbus remove cloudreve_watchdog
 dbus remove cloudreve_work_dir
+
+dbus remove cloudreve_version
+dbus remove softcenter_module_clouddrive_md5
+dbus remove softcenter_module_cloudreve_description
+dbus remove softcenter_module_cloudreve_install
+dbus remove softcenter_module_cloudreve_name
+dbus remove softcenter_module_cloudreve_title
+dbus remove softcenter_module_cloudreve_version
 
 echo_date "已成功移除插件... Bye~Bye~"
