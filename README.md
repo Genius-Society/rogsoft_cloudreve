@@ -1,6 +1,6 @@
 # Cloudreve for asuswrt
 [![license](https://img.shields.io/github/license/Genius-Society/rogsoft_cloudreve.svg)](https://github.com/Genius-Society/rogsoft_cloudreve/blob/main/LICENSE)
-[![GitHub release](https://img.shields.io/github/release/Genius-Society/rogsoft_cloudreve.svg)](https://github.com/Genius-Society/rogsoft_cloudreve/releases/latest)
+[![sourceforge](https://img.shields.io/badge/sourceforge-cloudreve-ff6600.svg)](https://sourceforge.net/projects/rogsoft-cloudreve/files)
 [![bilibili](https://img.shields.io/badge/bilibili-BV18ergYRERP-fc8bab.svg)](https://www.bilibili.com/video/BV18ergYRERP)
 
 Cloudreve 网盘的 Koolcenter 软件中心插件版本
