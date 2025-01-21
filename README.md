@@ -55,4 +55,5 @@ Cloudreve 可以让您快速搭建起公私兼备的网盘系统。Cloudreve 在
 | RT-AX57          | 256MB | BCM6756 | armv7 |   4   | 1.7GHz  |    ✔️     |
 
 ## Thanks
-<https://github.com/everstu/Koolcenter_alist>
+- <https://github.com/koolshare/rogsoft>
+- <https://github.com/everstu/Koolcenter_alist>
