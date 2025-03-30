@@ -1,7 +1,7 @@
 # Cloudreve for asuswrt
 [![license](https://img.shields.io/github/license/Genius-Society/rogsoft_cloudreve.svg)](https://github.com/Genius-Society/rogsoft_cloudreve/blob/main/LICENSE)
-[![sourceforge](https://img.shields.io/badge/sourceforge-Cloudreve-ff6600.svg)](https://sourceforge.net/projects/rogsoft-cloudreve/files)
-[![bilibili](https://img.shields.io/badge/bilibili-BV18ergYRERP-fc8bab.svg)](https://www.bilibili.com/video/BV18ergYRERP)
+[![sf](https://img.shields.io/badge/release-SourceForge-ff6600.svg)](https://sourceforge.net/projects/rogsoft-cloudreve/files)
+[![bili](https://img.shields.io/badge/bilibili-BV18ergYRERP-fc8bab.svg)](https://www.bilibili.com/video/BV18ergYRERP)
 
 Cloudreve 网盘的 Koolcenter 软件中心插件版本
 
@@ -53,6 +53,12 @@ Cloudreve 可以让您快速搭建起公私兼备的网盘系统。Cloudreve 在
 | ZenWiFi_XD4      | 256MB | BCM6755 | armv7 |   4   | 1.5 GHz |    ✔️     |
 | TUF-AX3000_V2    | 512MB | BCM6756 | armv7 |   4   | 1.7GHz  |    ✔️     |
 | RT-AX57          | 256MB | BCM6756 | armv7 |   4   | 1.7GHz  |    ✔️     |
+
+## Code download
+```bash
+git clone git@github.com:Genius-Society/rogsoft_cloudreve.git
+cd rogsoft_cloudreve
+```
 
 ## Thanks
 - <https://github.com/koolshare/rogsoft>
