@@ -1,8 +1,8 @@
 {
     "description": "Cloudreve - 部署公私兼备的网盘系统",
     "home_url": "Module_cloudreve.asp",
-    "md5": "fa34bb0ceeadb332a06f41cd5cee7681",
+    "md5": "fd7e5174b8883aad2f5b3653db3a424c",
     "module": "cloudreve",
     "title": "Cloudreve",
-    "version": "0.1"
+    "version": "1.1"
 }

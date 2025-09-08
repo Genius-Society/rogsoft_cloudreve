@@ -7,6 +7,7 @@ LOG_FILE=/tmp/upload/cloudreve_log.txt
 LOCK_FILE=/var/lock/cloudreve.lock
 BASH=${0##*/}
 ARGS=$@
+MAX_RETRY=10
 # 初始化配置变量
 CloudreveBaseDir=$(dbus get cloudreve_old_dir)
 configPort=5212
@@ -254,10 +255,17 @@ makeConfig() {
   fi
 }
 
-#检查已开启插件
+# 检查已开启插件
 check_enable_plugin() {
   echo_date "ℹ️当前已开启如下插件: "
-  echo_date "➡️"$(dbus listall | grep 'enable=1' | awk -F '_' '!a[$1]++' | awk -F '_' '{print "dbus get softcenter_module_"$1"_title"|"bash"}' | tr '\n' ',' | sed 's/,$/ /')
+  local titles=""
+  for mod in $(dbus listall | grep 'enable=1' | awk -F '_' '!a[$1]++ {print $1}'); do
+    t=$(dbus get "softcenter_module_${mod}_title")
+    [ -n "$t" ] && titles="$titles$t,"
+  done
+  # 去掉末尾多余逗号
+  titles=${titles%,}
+  echo_date "➡️$titles"
 }
 
 #检查内存是否合规
@@ -379,25 +387,32 @@ start() {
   if [ ! -f "${CloudreveBaseDir}/cloudreve.db" ] || [ ! -f "${CloudreveBaseDir}/conf.ini" ]; then
     rm -rf "${CloudreveBaseDir}/admin.account"
     nohup "${CloudreveBaseDir}/cloudreve" >"${CloudreveBaseDir}/admin.account" 2>&1 &
-    max_retry=10
     if [ ! -f "${CloudreveBaseDir}/conf.ini" ]; then
       echo_date "ℹ️检测到 conf.ini 缺失, 通过启动 cloudreve 自动生成..."
       retry_cnt=0
       while [ ! -f "${CloudreveBaseDir}/conf.ini" ]; do
+        echo_date "ℹ️等 1s 待 conf.ini 文件生成..."
+        sleep 1
         retry_cnt=$((retry_cnt + 1))
-        if [ "$retry_cnt" -gt "$max_retry" ]; then
-          echo_date "❌等待 conf.ini 超时 $max_retry 次, 终止脚本执行!"
+        if [ "$retry_cnt" -gt "$MAX_RETRY" ]; then
+          echo_date "❌等待 conf.ini 超时 $MAX_RETRY 次, 终止脚本执行!"
+          stop_plugin
           exit 1
         fi
-        echo_date "ℹ️等 1s 待 conf.ini 文件生成... (第 $retry_cnt 次)"
-        sleep 1
       done
     fi
     if [ ! -f "${CloudreveBaseDir}/cloudreve.db" ]; then
       echo_date "ℹ️检测到首次启动插件, 生成用户和密码..."
+      retry_cnt=0
       while [ ! -f "${CloudreveBaseDir}/admin.account" ] || ! grep -q "Admin password: " "${CloudreveBaseDir}/admin.account"; do
         echo_date "ℹ️未检测到 Admin password, 等待 5s..."
         sleep 5
+        retry_cnt=$((retry_cnt + 1))
+        if [ "$retry_cnt" -gt "$MAX_RETRY" ]; then
+          echo_date "❌检测 Admin password 超时 $MAX_RETRY 次, 终止脚本执行!"
+          stop_plugin
+          exit 1
+        fi
       done
       local USER=$(grep " Admin user name: " ${CloudreveBaseDir}/admin.account | awk '{print $7}')
       local PASS=$(grep " Admin password: " ${CloudreveBaseDir}/admin.account | awk '{print $6}')
@@ -428,9 +443,16 @@ start() {
   fi
 
   # 更新cloudreve二进制程序版本号
+  retry_cnt=0
   while [ ! -f "/tmp/upload/cloudreve_run_log.txt" ] || ! grep -q "   V" "/tmp/upload/cloudreve_run_log.txt"; do
     echo_date "ℹ️未检测到运行日志, 等待3s..."
     sleep 3
+    retry_cnt=$((retry_cnt + 1))
+    if [ "$retry_cnt" -gt "$MAX_RETRY" ]; then
+      echo_date "❌检测运行日志超时 $MAX_RETRY 次, 终止脚本执行!"
+      stop_plugin
+      exit 1
+    fi
   done
   local BIN_VER=$(grep "   V" /tmp/upload/cloudreve_run_log.txt | awk '{print $1}')
   BIN_VER=$(echo "$BIN_VER" | cut -c 2-)
@@ -455,10 +477,8 @@ stop_process() {
 stop_plugin() {
   # 1 stop cloudreve
   stop_process
-
   # 2. remove log
   rm -rf /tmp/upload/cloudreve_run_log.txt
-
   # 3. close port
   close_port
 }
@@ -524,7 +544,7 @@ close_port() {
   fi
 }
 
-random_password() {
+rand_pass() {
   # 2. 关闭server进程
   echo_date "重启cloudreve进程..."
   stop_process >/dev/null 2>&1
@@ -536,23 +556,30 @@ random_password() {
   local USER=$(sqlite3 "$DB_FILE" "SELECT email FROM users WHERE group_id = 1;")
   mv -f "${DB_FILE}" "${DB_FILE}.bak"
   nohup "${CloudreveBaseDir}/cloudreve" >"${CloudreveBaseDir}/admin.account" 2>&1 &
-  max_retry=5
   retry_cnt=0
   while [ ! -f "${CloudreveBaseDir}/admin.account" ] || ! grep -q "Admin password: " "${CloudreveBaseDir}/admin.account"; do
+    echo_date "ℹ️未检测到 Admin password, 等待5s..."
+    sleep 5
     retry_cnt=$((retry_cnt + 1))
-    if [ "$retry_cnt" -gt "$max_retry" ]; then
-      echo_date "❌检测 Admin password 超时 $max_retry 次, 终止脚本执行!"
+    if [ "$retry_cnt" -gt "$MAX_RETRY" ]; then
+      echo_date "❌检测 Admin password 超时 $MAX_RETRY 次, 终止脚本执行!"
+      stop_plugin
       exit 1
     fi
-    echo_date "ℹ️未检测到 Admin password, 等待5s... (第 $retry_cnt 次)"
-    sleep 5
   done
   local PASS=$(grep " Admin password: " ${CloudreveBaseDir}/admin.account | awk '{print $6}')
   local encrypted_pass=$(sqlite3 "$DB_FILE" "SELECT password FROM users WHERE group_id = 1;")
+  retry_cnt=0
   while [ -z $encrypted_pass ]; do
     encrypted_pass=$(sqlite3 "$DB_FILE" "SELECT password FROM users WHERE group_id = 1;")
     echo_date "ℹ️新密码还未写入数据库, 等待5s..."
     sleep 5
+    retry_cnt=$((retry_cnt + 1))
+    if [ "$retry_cnt" -gt "$MAX_RETRY" ]; then
+      echo_date "❌等待新密码写入数据库超时 $MAX_RETRY 次, 终止脚本执行!"
+      stop_plugin
+      exit 1
+    fi
   done
   killall cloudreve
   sqlite3 "${DB_FILE}.bak" "UPDATE users SET password = '$encrypted_pass' WHERE group_id = 1;"
@@ -644,7 +671,7 @@ web_submit)
     start | tee -a ${LOG_FILE}
   elif [ "${cloudreve_enable}" == "3" ]; then
     dbus set cloudreve_enable=1
-    random_password | tee -a ${LOG_FILE}
+    rand_pass | tee -a ${LOG_FILE}
   else
     echo_date "ℹ️停止 cloudreve!" | tee -a ${LOG_FILE}
     stop_plugin | tee -a ${LOG_FILE}
