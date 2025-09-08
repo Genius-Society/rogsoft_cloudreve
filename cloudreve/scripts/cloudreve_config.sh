@@ -422,9 +422,16 @@ start() {
   fi
 
   # 更新cloudreve二进制程序版本号
+  retry_cnt=0
   while [ ! -f "/tmp/upload/cloudreve_run_log.txt" ] || ! grep -q "   V" "/tmp/upload/cloudreve_run_log.txt"; do
     echo_date "ℹ️未检测到运行日志, 等待3s..."
     sleep 3
+    retry_cnt=$((retry_cnt + 1))
+    if [ "$retry_cnt" -gt "$MAX_RETRY" ]; then
+      echo_date "❌检测运行日志超时 $MAX_RETRY 次, 终止脚本执行!"
+      stop_plugin
+      exit 1
+    fi
   done
   local BIN_VER=$(grep "   V" /tmp/upload/cloudreve_run_log.txt | awk '{print $1}')
   BIN_VER=$(echo "$BIN_VER" | cut -c 2-)
