@@ -651,7 +651,7 @@
 				statusmenu += "<br/><br/>&nbsp;&nbsp;&nbsp;&nbsp;目前检测项目："
 				statusmenu += "<br/><br/>&nbsp;&nbsp;&nbsp;&nbsp;内存大小和虚拟内存挂载情况 (物理内存低于1G, 强制挂载虚拟内存) "
 				statusmenu += "<br/><br/>&nbsp;&nbsp;&nbsp;&nbsp;已开启插件检测并提示"
-				statusmenu += "<br/><br/>&nbsp;&nbsp;&nbsp;&nbsp;由于alist对路由器资源占用较多, 所以强烈建议为路由器配置1G及以上的虚拟内存, 以保证alist的稳定运行!"
+				statusmenu += "<br/><br/>&nbsp;&nbsp;&nbsp;&nbsp;由于cloudreve对路由器资源占用较多, 所以强烈建议为路由器配置1G及以上的虚拟内存, 以保证cloudreve的稳定运行!"
 				_caption = "关闭系统检测";
 			}
 

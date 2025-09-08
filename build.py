@@ -44,6 +44,7 @@ def pack_folder(module_name: str):
 
 def build_module():
     try:
+        fix_crlf()
         conf = get_or_create()
 
     except Exception as e:
@@ -74,6 +75,11 @@ def build_module():
         json.dump(conf, fw, sort_keys=True, indent=4, ensure_ascii=False)
 
     print("build done", conf["module"] + ".tar.gz")
+
+
+def fix_crlf():
+    sh_script = os.path.dirname(os.path.abspath(__file__)) + "\\rm_crlf.sh"
+    subprocess.run(["bash", sh_script], check=True)
 
 
 if __name__ == "__main__":

@@ -289,8 +289,8 @@ check_memory() {
 }
 
 start_process() {
-  ALIST_RUN_LOG=/tmp/upload/cloudreve_run_log.txt
-  rm -rf ${ALIST_RUN_LOG}
+  CLOUDREVE_RUN_LOG=/tmp/upload/cloudreve_run_log.txt
+  rm -rf ${CLOUDREVE_RUN_LOG}
   if [ "${cloudreve_watchdog}" == "1" ]; then
     echo_date "🟠启动 cloudreve 进程, 开启进程实时守护..."
     mkdir -p /koolshare/perp/cloudreve
@@ -299,7 +299,7 @@ start_process() {
 			source /koolshare/scripts/base.sh
 			CMD="${CloudreveBaseDir}/cloudreve"
 			if test \${1} = 'start' ; then
-				exec >${ALIST_RUN_LOG} 2>&1
+				exec >${CLOUDREVE_RUN_LOG} 2>&1
 				exec \$CMD
 			fi
 			exit 0
@@ -314,7 +314,7 @@ start_process() {
   else
     echo_date "🟠启动 cloudreve 进程..."
     rm -rf /tmp/cloudreve.pid
-    start-stop-daemon --start --quiet --make-pidfile --pidfile /tmp/cloudreve.pid --background --startas /bin/bash -- -c "${CloudreveBaseDir}/cloudreve >${ALIST_RUN_LOG} 2>&1"
+    start-stop-daemon --start --quiet --make-pidfile --pidfile /tmp/cloudreve.pid --background --startas /bin/bash -- -c "${CloudreveBaseDir}/cloudreve >${CLOUDREVE_RUN_LOG} 2>&1"
     detect_running_status cloudreve
   fi
 }
@@ -432,16 +432,16 @@ start() {
 }
 
 stop_process() {
-  local ALIST_PID=$(pidof cloudreve)
+  local CLOUDREVE_PID=$(pidof cloudreve)
   # checkDbFilePath stop
-  if [ -n "${ALIST_PID}" ]; then
+  if [ -n "${CLOUDREVE_PID}" ]; then
     echo_date "⛔关闭cloudreve进程..."
     if [ -f "/koolshare/perp/cloudreve/rc.main" ]; then
       perpctl d cloudreve >/dev/null 2>&1
     fi
     rm -rf /koolshare/perp/cloudreve
     killall cloudreve >/dev/null 2>&1
-    kill -9 "${ALIST_PID}" >/dev/null 2>&1
+    kill -9 "${CLOUDREVE_PID}" >/dev/null 2>&1
   fi
 }
 
@@ -559,18 +559,18 @@ random_password() {
 }
 
 check_status() {
-  local ALIST_PID=$(pidof cloudreve)
+  local CLOUDREVE_PID=$(pidof cloudreve)
   if [ "${cloudreve_enable}" == "1" ]; then
-    if [ -n "${ALIST_PID}" ]; then
+    if [ -n "${CLOUDREVE_PID}" ]; then
       if [ "${cloudreve_watchdog}" == "1" ]; then
         local cloudreve_time=$(perpls | grep cloudreve | grep -Eo "uptime.+-s\ " | awk -F" |:|/" '{print $3}')
         if [ -n "${cloudreve_time}" ]; then
-          http_response "cloudreve 进程运行正常! (PID: ${ALIST_PID} , 守护运行时间: ${cloudreve_time}) "
+          http_response "cloudreve 进程运行正常! (PID: ${CLOUDREVE_PID} , 守护运行时间: ${cloudreve_time}) "
         else
-          http_response "cloudreve 进程运行正常! (PID: ${ALIST_PID}) "
+          http_response "cloudreve 进程运行正常! (PID: ${CLOUDREVE_PID}) "
         fi
       else
-        http_response "cloudreve 进程运行正常! (PID: ${ALIST_PID}) "
+        http_response "cloudreve 进程运行正常! (PID: ${CLOUDREVE_PID}) "
       fi
     else
       http_response "cloudreve 进程未运行!"
