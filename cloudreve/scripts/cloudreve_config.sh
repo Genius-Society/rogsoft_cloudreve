@@ -536,9 +536,15 @@ random_password() {
   local USER=$(sqlite3 "$DB_FILE" "SELECT email FROM users WHERE group_id = 1;")
   mv -f "${DB_FILE}" "${DB_FILE}.bak"
   nohup "${CloudreveBaseDir}/cloudreve" >"${CloudreveBaseDir}/admin.account" 2>&1 &
-
+  max_retry=5
+  retry_cnt=0
   while [ ! -f "${CloudreveBaseDir}/admin.account" ] || ! grep -q "Admin password: " "${CloudreveBaseDir}/admin.account"; do
-    echo_date "ℹ️未检测到 Admin password, 等待5s..."
+    retry_cnt=$((retry_cnt + 1))
+    if [ "$retry_cnt" -gt "$max_retry" ]; then
+      echo_date "❌检测 Admin password 超时 $max_retry 次, 终止脚本执行!"
+      exit 1
+    fi
+    echo_date "ℹ️未检测到 Admin password, 等待5s... (第 $retry_cnt 次)"
     sleep 5
   done
   local PASS=$(grep " Admin password: " ${CloudreveBaseDir}/admin.account | awk '{print $6}')
