@@ -243,14 +243,14 @@ makeConfig() {
     BINDADDR="0.0.0.0"
   fi
 
-  echo_date "➡️更新cloudreve配置到${CloudreveBaseDir}/data/conf.ini文件!"
-  upd_ini "${CloudreveBaseDir}/data/conf.ini" "System" "Listen" ":$configPort"
+  echo_date "➡️更新cloudreve配置到${CloudreveBaseDir}/conf.ini文件!"
+  upd_ini "${CloudreveBaseDir}/conf.ini" "System" "Listen" ":$configPort"
   if [ "${configHttps}" == "true" ]; then
-    upd_ini "${CloudreveBaseDir}/data/conf.ini" "SSL" "Listen" ":$configHttpsPort"
-    upd_ini "${CloudreveBaseDir}/data/conf.ini" "SSL" "CertPath" "$configCertFile"
-    upd_ini "${CloudreveBaseDir}/data/conf.ini" "SSL" "KeyPath" "$configKeyFile"
+    upd_ini "${CloudreveBaseDir}/conf.ini" "SSL" "Listen" ":$configHttpsPort"
+    upd_ini "${CloudreveBaseDir}/conf.ini" "SSL" "CertPath" "$configCertFile"
+    upd_ini "${CloudreveBaseDir}/conf.ini" "SSL" "KeyPath" "$configKeyFile"
   else
-    del_sec "${CloudreveBaseDir}/data/conf.ini" "SSL"
+    del_sec "${CloudreveBaseDir}/conf.ini" "SSL"
   fi
 }
 
@@ -340,9 +340,9 @@ start() {
     echo_date "➡️正在转移部署目录..."
     mkdir -p "${CloudreveBaseDir}_tmp"
     mv -f "${CloudreveBaseDir}/cloudreve" "${CloudreveBaseDir}_tmp/"
-    mv -f "${CloudreveBaseDir}/data/cloudreve.db" "${CloudreveBaseDir}_tmp/" >/dev/null 2>&1
-    mv -f "${CloudreveBaseDir}/data/conf.ini" "${CloudreveBaseDir}_tmp/" >/dev/null 2>&1
-    mv -f "${CloudreveBaseDir}/data/uploads" "${CloudreveBaseDir}_tmp/" >/dev/null 2>&1
+    mv -f "${CloudreveBaseDir}/cloudreve.db" "${CloudreveBaseDir}_tmp/" >/dev/null 2>&1
+    mv -f "${CloudreveBaseDir}/conf.ini" "${CloudreveBaseDir}_tmp/" >/dev/null 2>&1
+    mv -f "${CloudreveBaseDir}/uploads" "${CloudreveBaseDir}_tmp/" >/dev/null 2>&1
     mv -f "${CloudreveBaseDir}/admin.account" "${CloudreveBaseDir}_tmp/" >/dev/null 2>&1
     mkdir -p "${cloudreve_work_dir}"
     mv -f "${CloudreveBaseDir}_tmp"/* "${cloudreve_work_dir}/"
@@ -376,14 +376,14 @@ start() {
   fi
 
   # 5. 检测首次运行, 给出账号密码
-  if [ ! -f "${CloudreveBaseDir}/data/cloudreve.db" ] || [ ! -f "${CloudreveBaseDir}/data/conf.ini" ]; then
+  if [ ! -f "${CloudreveBaseDir}/cloudreve.db" ] || [ ! -f "${CloudreveBaseDir}/conf.ini" ]; then
     rm -rf "${CloudreveBaseDir}/admin.account"
     nohup "${CloudreveBaseDir}/cloudreve" >"${CloudreveBaseDir}/admin.account" 2>&1 &
     max_retry=10
-    if [ ! -f "${CloudreveBaseDir}/data/conf.ini" ]; then
+    if [ ! -f "${CloudreveBaseDir}/conf.ini" ]; then
       echo_date "ℹ️检测到 conf.ini 缺失, 通过启动 cloudreve 自动生成..."
       retry_cnt=0
-      while [ ! -f "${CloudreveBaseDir}/data/conf.ini" ]; do
+      while [ ! -f "${CloudreveBaseDir}/conf.ini" ]; do
         retry_cnt=$((retry_cnt + 1))
         if [ "$retry_cnt" -gt "$max_retry" ]; then
           echo_date "❌等待 conf.ini 超时 $max_retry 次, 终止脚本执行!"
@@ -393,7 +393,7 @@ start() {
         sleep 1
       done
     fi
-    if [ ! -f "${CloudreveBaseDir}/data/cloudreve.db" ]; then
+    if [ ! -f "${CloudreveBaseDir}/cloudreve.db" ]; then
       echo_date "ℹ️检测到首次启动插件, 生成用户和密码..."
       while [ ! -f "${CloudreveBaseDir}/admin.account" ] || ! grep -q "Admin password: " "${CloudreveBaseDir}/admin.account"; do
         echo_date "ℹ️未检测到 Admin password, 等待 5s..."
@@ -532,7 +532,7 @@ random_password() {
   # 1. 重新生成密码
   echo_date "🔍重新生成cloudreve面板的用户和随机密码..."
   rm -rf "${CloudreveBaseDir}/admin.account"
-  local DB_FILE=$CloudreveBaseDir"/data/cloudreve.db"
+  local DB_FILE=$CloudreveBaseDir"/cloudreve.db"
   local USER=$(sqlite3 "$DB_FILE" "SELECT email FROM users WHERE group_id = 1;")
   mv -f "${DB_FILE}" "${DB_FILE}.bak"
   nohup "${CloudreveBaseDir}/cloudreve" >"${CloudreveBaseDir}/admin.account" 2>&1 &
