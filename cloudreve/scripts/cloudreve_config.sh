@@ -258,7 +258,14 @@ makeConfig() {
 # 检查已开启插件
 check_enable_plugin() {
   echo_date "ℹ️当前已开启如下插件: "
-  echo_date "➡️"$(dbus listall | grep 'enable=1' | awk -F '_' '!a[$1]++' | awk -F '_' '{print "dbus get softcenter_module_"$1"_title"|"bash"}' | tr '\n' ',' | sed 's/,$/ /')
+  local titles=""
+  for mod in $(dbus listall | grep 'enable=1' | awk -F '_' '!a[$1]++ {print $1}'); do
+    t=$(dbus get "softcenter_module_${mod}_title")
+    [ -n "$t" ] && titles="$titles$t,"
+  done
+  # 去掉末尾多余逗号
+  titles=${titles%,}
+  echo_date "➡️$titles"
 }
 
 # 检查内存是否合规
