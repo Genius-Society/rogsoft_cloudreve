@@ -143,7 +143,7 @@ makeConfig() {
     configPort=${cloudreve_port}
   fi
 
-  #初始化https端口
+  # 初始化https端口
   if [ $(number_test ${cloudreve_https_port}) != "0" ]; then
     dbus set cloudreve_https_port=${configHttpsPort}
   else
@@ -268,7 +268,7 @@ check_enable_plugin() {
   echo_date "➡️$titles"
 }
 
-#检查内存是否合规
+# 检查内存是否合规
 check_memory() {
   local swap_size=$(free | grep Swap | awk '{print $2}')
   echo_date "ℹ️检查系统内存是否合规!"
