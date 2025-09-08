@@ -777,7 +777,7 @@
 											和
 											DBMS。
 											<span><a type="button"
-													href="https://github.com/Society-Genius/rogsoft_cloudreve/releases"
+													href="https://sourceforge.net/projects/rogsoft-cloudreve/files"
 													target="_blank" class="ks_btn"
 													style="margin-left:5px;">更新日志</a></span>
 											<span><a type="button" class="ks_btn" href="javascript:void(0);"

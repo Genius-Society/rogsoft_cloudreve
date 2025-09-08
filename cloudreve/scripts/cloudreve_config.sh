@@ -379,10 +379,17 @@ start() {
   if [ ! -f "${CloudreveBaseDir}/cloudreve.db" ] || [ ! -f "${CloudreveBaseDir}/conf.ini" ]; then
     rm -rf "${CloudreveBaseDir}/admin.account"
     nohup "${CloudreveBaseDir}/cloudreve" >"${CloudreveBaseDir}/admin.account" 2>&1 &
+    max_retry=10
     if [ ! -f "${CloudreveBaseDir}/conf.ini" ]; then
       echo_date "ℹ️检测到 conf.ini 缺失, 通过启动 cloudreve 自动生成..."
+      retry_cnt=0
       while [ ! -f "${CloudreveBaseDir}/conf.ini" ]; do
-        echo_date "ℹ️等 1s 待 conf.ini 文件生成..."
+        retry_cnt=$((retry_cnt + 1))
+        if [ "$retry_cnt" -gt "$max_retry" ]; then
+          echo_date "❌等待 conf.ini 超时 $max_retry 次, 终止脚本执行!"
+          exit 1
+        fi
+        echo_date "ℹ️等 1s 待 conf.ini 文件生成... (第 $retry_cnt 次)"
         sleep 1
       done
     fi
