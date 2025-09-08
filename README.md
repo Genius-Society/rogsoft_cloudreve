@@ -1,5 +1,5 @@
 # Cloudreve for asuswrt
-[![license](https://img.shields.io/github/license/Genius-Society/rogsoft_cloudreve.svg)](https://github.com/Genius-Society/rogsoft_cloudreve/blob/main/LICENSE)
+[![license](https://img.shields.io/github/license/Genius-Society/rogsoft_cloudreve.svg)](./LICENSE)
 [![sf](https://img.shields.io/badge/release-SourceForge-ff6600.svg)](https://sourceforge.net/projects/rogsoft-cloudreve/files)
 [![bili](https://img.shields.io/badge/bilibili-BV18ergYRERP-fc8bab.svg)](https://www.bilibili.com/video/BV18ergYRERP)
 
@@ -64,7 +64,7 @@ conda create -n py311 python=3.11 -y
 conda activate py311
 ```
 
-## 打包
+## Windows 上打包
 ```bash
 python build.py
 ```

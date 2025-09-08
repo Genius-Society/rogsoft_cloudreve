@@ -42,6 +42,11 @@ def pack_folder(module_name: str):
         print(f"Failed to create {module_name}.tar")
 
 
+def fix_crlf():
+    sh_script = os.path.dirname(os.path.abspath(__file__)) + "\\rm_crlf.sh"
+    subprocess.run(["bash", sh_script], check=True)
+
+
 def build_module():
     try:
         fix_crlf()
@@ -75,11 +80,6 @@ def build_module():
         json.dump(conf, fw, sort_keys=True, indent=4, ensure_ascii=False)
 
     print("build done", conf["module"] + ".tar.gz")
-
-
-def fix_crlf():
-    sh_script = os.path.dirname(os.path.abspath(__file__)) + "\\rm_crlf.sh"
-    subprocess.run(["bash", sh_script], check=True)
 
 
 if __name__ == "__main__":
