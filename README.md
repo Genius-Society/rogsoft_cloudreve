@@ -18,23 +18,6 @@ Cloudreve 可以让您快速搭建起公私兼备的网盘系统。Cloudreve 在
 ## 官方信息
 官方文档: <https://docs.cloudreve.org>
 
-## 代码下载
-```bash
-git clone git@github.com:Genius-Society/rogsoft_cloudreve.git
-cd rogsoft_cloudreve
-```
-
-## 环境
-```bash
-conda create -n py311 python=3.11 -y
-conda activate py311
-```
-
-## 打包
-```bash
-python build.py
-```
-
 ## 机型支持
 在 asuswrt 为基础的固件上, cloudreve 插件目前仅支持 aarch64 架构的路由器, 具体如下:
 - 部分及其未列出, 请根据 CPU 型号和支持软件中心与否自行判断
@@ -68,6 +51,23 @@ python build.py
 | ZenWiFi_XD4      | 256MB | BCM6755 | armv7 |   4   | 1.5 GHz |
 | TUF-AX3000_V2    | 512MB | BCM6756 | armv7 |   4   | 1.7GHz  |
 | RT-AX57          | 256MB | BCM6756 | armv7 |   4   | 1.7GHz  |
+
+## 代码下载
+```bash
+git clone git@github.com:Genius-Society/rogsoft_cloudreve.git
+cd rogsoft_cloudreve
+```
+
+## 环境
+```bash
+conda create -n py311 python=3.11 -y
+conda activate py311
+```
+
+## 打包
+```bash
+python build.py
+```
 
 ## 致谢
 - <https://github.com/koolshare/rogsoft>
