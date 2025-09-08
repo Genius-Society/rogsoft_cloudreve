@@ -290,7 +290,7 @@ check_memory() {
         dbus set cloudreve_memory_warn=1
       fi
     else
-      echo_date"⚠️未查询到系统内存, 请自行注意系统内存!"
+      echo_date "⚠️未查询到系统内存, 请自行注意系统内存!"
     fi
   fi
   echo_date "=============================================="

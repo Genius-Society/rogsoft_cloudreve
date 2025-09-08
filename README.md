@@ -18,6 +18,11 @@ Cloudreve 可以让您快速搭建起公私兼备的网盘系统。Cloudreve 在
 ## 官方信息
 官方文档: <https://docs.cloudreve.org>
 
+## 前置插件
+在 KoolCenter 软件中心即可安装并挂载, 安装顺序自上而下:
+- USB2JFFS
+- 虚拟内存
+
 ## 机型支持
 在 asuswrt 为基础的固件上, cloudreve 插件目前仅支持 aarch64 架构的路由器, 具体如下:
 - 部分及其未列出, 请根据 CPU 型号和支持软件中心与否自行判断
