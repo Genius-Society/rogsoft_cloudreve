@@ -127,7 +127,7 @@ install_now() {
 	cp -rf /tmp/${module}/webs/* /koolshare/webs/
 	cp -rf /tmp/${module}/uninstall.sh /koolshare/scripts/uninstall_${module}.sh
 
-	#创建开机自启任务
+	# 创建开机自启任务
 	[ ! -L "/koolshare/init.d/S99cloudreve.sh" ] && ln -sf /koolshare/scripts/cloudreve_config.sh /koolshare/init.d/S99cloudreve.sh
 	[ ! -L "/koolshare/init.d/N99cloudreve.sh" ] && ln -sf /koolshare/scripts/cloudreve_config.sh /koolshare/init.d/N99cloudreve.sh
 
@@ -149,7 +149,7 @@ install_now() {
 	dbus_nset cloudreve_cert_file "/etc/cert.pem"
 	dbus_nset cloudreve_key_file "/etc/key.pem"
 
-	# reenable
+	# re-enable
 	if [ "${enable}" == "1" ]; then
 		echo_date "重新启动cloudreve插件!"
 		sh /koolshare/scripts/cloudreve_config.sh boot_up

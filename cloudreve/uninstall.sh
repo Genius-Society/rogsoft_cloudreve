@@ -15,27 +15,8 @@ echo_date "插件资源文件删除成功..."
 rm -rf /koolshare/scripts/uninstall_cloudreve.sh
 
 echo_date "清理dbus缓存..."
-dbus remove cloudreve_binver
-dbus remove cloudreve_cert_file
-dbus remove cloudreve_disablecheck
-dbus remove cloudreve_enable
-dbus remove cloudreve_https
-dbus remove cloudreve_https_port
-dbus remove cloudreve_key_file
-dbus remove cloudreve_old_dir
-dbus remove cloudreve_open_http_port
-dbus remove cloudreve_open_https_port
-dbus remove cloudreve_port
-dbus remove cloudreve_publicswitch
-dbus remove cloudreve_watchdog
-dbus remove cloudreve_work_dir
-
-dbus remove cloudreve_version
-dbus remove softcenter_module_clouddrive_md5
-dbus remove softcenter_module_cloudreve_description
-dbus remove softcenter_module_cloudreve_install
-dbus remove softcenter_module_cloudreve_name
-dbus remove softcenter_module_cloudreve_title
-dbus remove softcenter_module_cloudreve_version
+for key in $(dbus listall | grep 'cloudreve_' | cut -d '=' -f1); do
+    dbus remove "$key"
+done
 
 echo_date "已成功移除插件... Bye~Bye~"
