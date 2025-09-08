@@ -814,7 +814,7 @@
 															style="margin-left:5px;">重置密码</a>
 														<a type="button" class="ks_btn" href="javascript:void(0);"
 															onclick="show_log_pannel()"
-															style="margin-left:5px;">cloudreve运行日志</a>
+															style="margin-left:5px;">Cloudreve 运行日志</a>
 													</td>
 												</tr>
 												<tr id="cloudreve_pannel_tr" style="display: none;">
