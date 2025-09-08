@@ -773,9 +773,8 @@
 										<div style="margin: 10px 0 10px 5px;" class="splitLine"></div>
 										<div class="SimpleNote">
 											<a href="https://github.com/cloudreve/Cloudreve"
-												target="_blank"><em><u>Cloudreve</u></em></a>&nbsp;一个部署公私兼备的网盘系统，使用 Go
-											和
-											DBMS。
+												target="_blank"><em><u>Cloudreve</u></em></a>&nbsp;一个部署公私兼备的网盘系统, 使用 Go
+											和 DBMS 开发
 											<span><a type="button"
 													href="https://sourceforge.net/projects/rogsoft-cloudreve"
 													target="_blank" class="ks_btn"
@@ -945,7 +944,7 @@
 										<div style="margin: 10px 0 10px 5px;" class="splitLine"></div>
 										<div style="margin:10px 0 0 5px">
 											<li>由于cloudreve需要路由器较好性能, 本插件仅支持hnd平台, AX32机型请慎重使用!</li>
-											<li>建议挂载U盘并配合usb2jffs和虚拟内存插件一起食用, 口感更佳, 否则可能会出现莫名的问题。</li>
+											<li>建议挂载U盘并配合usb2jffs和虚拟内存插件一起食用, 口感更佳, 否则可能会出现莫名的问题</li>
 											<li>如有不懂, 特别是cloudreve配置文件的填写, 请查看Cloudreve官方文档<a
 													href="https://docs.cloudreve.org/"
 													target="_blank"><em>点这里看文档</em></a></li>

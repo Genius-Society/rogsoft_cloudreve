@@ -18,7 +18,7 @@ def get_or_create():
         print("config.json not found, build.py is root path. auto write config.json")
         module_name = os.path.basename(parent_path)
         conf["module"] = module_name
-        conf["version"] = "0.1"
+        conf["version"] = "1.1"
         conf["home_url"] = "Module_%s.asp" % module_name
         conf["title"] = "title of " + module_name
         conf["description"] = "description of " + module_name

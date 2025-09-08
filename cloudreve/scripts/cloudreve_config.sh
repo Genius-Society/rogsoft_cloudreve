@@ -364,6 +364,14 @@ start() {
     fi
   fi
 
+  # 检查主程序完整性
+  if [ ! -d "$CloudreveBaseDir" ] || [ ! -f "$CloudreveBaseDir/cloudreve" ]; then
+    echo_date "❌Cloudreve 主程序缺失, 请重新安装插件!"
+    dbus set cloudreve_enable=0
+    stop_plugin
+    exit 1
+  fi
+
   # remove error
   dbus_rm cloudreve_cert_error
   dbus_rm cloudreve_key_error
