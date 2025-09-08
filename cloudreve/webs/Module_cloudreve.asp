@@ -569,12 +569,6 @@
 				statusmenu += "&nbsp;&nbsp;&nbsp;&nbsp;3.目前只支持hnd机型中的armv8机型, 比如cpu型号为BCM4906、BCM4908、BCM4912等armv8机型。<br/><br/>"
 				_caption = "运行状态";
 			}
-			if (itemNum == 3) {
-				statusmenu = "!!!请注意: 不允许查看密码, 只能重新生成! 若修改后未生效可重试。<br/><br/>"
-				statusmenu += "&nbsp;&nbsp;&nbsp;&nbsp;点击【重置密码】可以重新生成当前面板的账号和密码, 请注意: 如果你需要配置webdav, 同样应该使用此用户名和密码。<br/><br/>"
-				statusmenu += "&nbsp;&nbsp;&nbsp;&nbsp;点击【cloudreve运行日志】可以实时查看cloudreve程序的运行情况。"
-				_caption = "信息获取";
-			}
 			if (itemNum == 4) {
 				width = "780px";
 				statusmenu = "&nbsp;&nbsp;&nbsp;&nbsp;在不同的配置和网络环境下, 点击【访问Cloudreve面板】进入的是不同地址: ";
@@ -775,9 +769,9 @@
 											<a href="https://github.com/cloudreve/Cloudreve"
 												target="_blank"><em><u>Cloudreve</u></em></a>&nbsp;一个部署公私兼备的网盘系统，使用 Go
 											和
-											DBMS。
+											DBMS 开发
 											<span><a type="button"
-													href="https://sourceforge.net/projects/rogsoft-cloudreve/files"
+													href="https://sourceforge.net/projects/rogsoft-cloudreve"
 													target="_blank" class="ks_btn"
 													style="margin-left:5px;">更新日志</a></span>
 											<span><a type="button" class="ks_btn" href="javascript:void(0);"
@@ -810,12 +804,8 @@
 													<th><a onmouseover="mOver(this, 3)" onmouseout="mOut(this)"
 															class="hintstyle" href="javascript:void(0);">信息获取</a></th>
 													<td>
-														<a type="button" style="vertical-align:middle;cursor:pointer;"
-															class="ks_btn" href="javascript:void(0);" onclick="save(3)"
-															style="margin-left:5px;">重置密码</a>
 														<a type="button" class="ks_btn" href="javascript:void(0);"
-															onclick="show_log_pannel()"
-															style="margin-left:5px;">cloudreve运行日志</a>
+															onclick="show_log_pannel()">Cloudreve 运行日志</a>
 													</td>
 												</tr>
 												<tr id="cloudreve_pannel_tr" style="display: none;">
@@ -945,7 +935,7 @@
 										<div style="margin: 10px 0 10px 5px;" class="splitLine"></div>
 										<div style="margin:10px 0 0 5px">
 											<li>由于cloudreve需要路由器较好性能, 本插件仅支持hnd平台, AX32机型请慎重使用!</li>
-											<li>建议挂载U盘并配合usb2jffs和虚拟内存插件一起食用, 口感更佳, 否则可能会出现莫名的问题。</li>
+											<li>建议挂载U盘并配合usb2jffs和虚拟内存插件一起食用, 口感更佳, 否则可能会出现莫名的问题</li>
 											<li>如有不懂, 特别是cloudreve配置文件的填写, 请查看Cloudreve官方文档<a
 													href="https://docs.cloudreve.org/"
 													target="_blank"><em>点这里看文档</em></a></li>

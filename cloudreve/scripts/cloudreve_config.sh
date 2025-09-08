@@ -7,6 +7,7 @@ LOG_FILE=/tmp/upload/cloudreve_log.txt
 LOCK_FILE=/var/lock/cloudreve.lock
 BASH=${0##*/}
 ARGS=$@
+MAX_RETRY=10
 # 初始化配置变量
 CloudreveBaseDir=$(dbus get cloudreve_old_dir)
 configPort=5212
@@ -142,7 +143,7 @@ makeConfig() {
     configPort=${cloudreve_port}
   fi
 
-  #初始化https端口
+  # 初始化https端口
   if [ $(number_test ${cloudreve_https_port}) != "0" ]; then
     dbus set cloudreve_https_port=${configHttpsPort}
   else
@@ -254,13 +255,13 @@ makeConfig() {
   fi
 }
 
-#检查已开启插件
+# 检查已开启插件
 check_enable_plugin() {
   echo_date "ℹ️当前已开启如下插件: "
   echo_date "➡️"$(dbus listall | grep 'enable=1' | awk -F '_' '!a[$1]++' | awk -F '_' '{print "dbus get softcenter_module_"$1"_title"|"bash"}' | tr '\n' ',' | sed 's/,$/ /')
 }
 
-#检查内存是否合规
+# 检查内存是否合规
 check_memory() {
   local swap_size=$(free | grep Swap | awk '{print $2}')
   echo_date "ℹ️检查系统内存是否合规!"
@@ -327,7 +328,7 @@ normalize_path() {
 }
 
 start() {
-  # 3. stop first
+  # stop first
   stop_process
 
   # fix input path
@@ -335,7 +336,7 @@ start() {
   cloudreve_work_dir=$(normalize_path ${cloudreve_work_dir})
   dbus set cloudreve_work_dir=${cloudreve_work_dir}
 
-  # 0. prepare folder if not exist
+  # prepare folder if not exist
   if [ "${CloudreveBaseDir}" != "${cloudreve_work_dir}" ]; then
     echo_date "➡️正在转移部署目录..."
     mkdir -p "${CloudreveBaseDir}_tmp"
@@ -356,57 +357,50 @@ start() {
     fi
   fi
 
-  # 1. remove error
+  # 检查主程序完整性
+  if [ ! -d "$CloudreveBaseDir" ] || [ ! -f "$CloudreveBaseDir/cloudreve" ]; then
+    echo_date "❌Cloudreve 主程序缺失, 请重新安装插件!"
+    dbus set cloudreve_enable=0
+    stop_plugin
+    exit 1
+  fi
+
+  # remove error
   dbus_rm cloudreve_cert_error
   dbus_rm cloudreve_key_error
   dbus_rm cloudreve_memory_error
   dbus_rm cloudreve_memory_warn
 
-  # 2. system_check
+  # system_check
   if [ "${cloudreve_disablecheck}" = "1" ]; then
     echo_date "⚠️您已关闭系统检测功能, 请自行留意路由器性能!"
     echo_date "⚠️插件对路由器性能的影响请您自行处理!!!"
   else
     echo_date "==================== 系统检测 ===================="
-    #2.1 memory_check
+    # memory_check
     check_memory
-    #2.2 enable_plugin
+    # enable_plugin
     check_enable_plugin
     echo_date "==================== 系统检测结束 ===================="
   fi
 
-  # 5. 检测首次运行, 给出账号密码
+  # 检测首次运行, 给出账号密码
   if [ ! -f "${CloudreveBaseDir}/data/cloudreve.db" ] || [ ! -f "${CloudreveBaseDir}/data/conf.ini" ]; then
     rm -rf "${CloudreveBaseDir}/admin.account"
     nohup "${CloudreveBaseDir}/cloudreve" >"${CloudreveBaseDir}/admin.account" 2>&1 &
-    max_retry=10
     if [ ! -f "${CloudreveBaseDir}/data/conf.ini" ]; then
       echo_date "ℹ️检测到 conf.ini 缺失, 通过启动 cloudreve 自动生成..."
       retry_cnt=0
       while [ ! -f "${CloudreveBaseDir}/data/conf.ini" ]; do
-        retry_cnt=$((retry_cnt + 1))
-        if [ "$retry_cnt" -gt "$max_retry" ]; then
-          echo_date "❌等待 conf.ini 超时 $max_retry 次, 终止脚本执行!"
-          exit 1
-        fi
         echo_date "ℹ️等 1s 待 conf.ini 文件生成... (第 $retry_cnt 次)"
         sleep 1
+        retry_cnt=$((retry_cnt + 1))
+        if [ "$retry_cnt" -gt "$MAX_RETRY" ]; then
+          echo_date "❌等待 conf.ini 超时 $MAX_RETRY 次, 终止脚本执行!"
+          stop_plugin
+          exit 1
+        fi
       done
-    fi
-    if [ ! -f "${CloudreveBaseDir}/data/cloudreve.db" ]; then
-      echo_date "ℹ️检测到首次启动插件, 生成用户和密码..."
-      while [ ! -f "${CloudreveBaseDir}/admin.account" ] || ! grep -q "Admin password: " "${CloudreveBaseDir}/admin.account"; do
-        echo_date "ℹ️未检测到 Admin password, 等待 5s..."
-        sleep 5
-      done
-      local USER=$(grep " Admin user name: " ${CloudreveBaseDir}/admin.account | awk '{print $7}')
-      local PASS=$(grep " Admin password: " ${CloudreveBaseDir}/admin.account | awk '{print $6}')
-      if [ -n "${USER}" -a -n "${PASS}" ]; then
-        echo_date "---------------------------------"
-        echo_date "😛cloudreve面板用户: ${USER}"
-        echo_date "🔑cloudreve面板密码: ${PASS}"
-        echo_date "---------------------------------"
-      fi
     fi
     killall cloudreve
     local BIN_VER=$(grep "   V" ${CloudreveBaseDir}/admin.account | awk '{print $1}')
@@ -415,13 +409,13 @@ start() {
     rm -rf "${CloudreveBaseDir}/admin.account"
   fi
 
-  # 4. gen config.json
+  # gen config.json
   makeConfig
 
-  # 7. start process
+  # start process
   start_process
 
-  # 8. open port
+  # open port
   if [ "${cloudreve_publicswitch}" == "1" ]; then
     close_port >/dev/null 2>&1
     open_port
@@ -453,13 +447,11 @@ stop_process() {
 }
 
 stop_plugin() {
-  # 1 stop cloudreve
+  # stop cloudreve
   stop_process
-
-  # 2. remove log
+  # remove log
   rm -rf /tmp/upload/cloudreve_run_log.txt
-
-  # 3. close port
+  # close port
   close_port
 }
 
@@ -524,53 +516,6 @@ close_port() {
   fi
 }
 
-random_password() {
-  # 2. 关闭server进程
-  echo_date "重启cloudreve进程..."
-  stop_process >/dev/null 2>&1
-
-  # 1. 重新生成密码
-  echo_date "🔍重新生成cloudreve面板的用户和随机密码..."
-  rm -rf "${CloudreveBaseDir}/admin.account"
-  local DB_FILE=$CloudreveBaseDir"/data/cloudreve.db"
-  local USER=$(sqlite3 "$DB_FILE" "SELECT email FROM users WHERE group_id = 1;")
-  mv -f "${DB_FILE}" "${DB_FILE}.bak"
-  nohup "${CloudreveBaseDir}/cloudreve" >"${CloudreveBaseDir}/admin.account" 2>&1 &
-  max_retry=5
-  retry_cnt=0
-  while [ ! -f "${CloudreveBaseDir}/admin.account" ] || ! grep -q "Admin password: " "${CloudreveBaseDir}/admin.account"; do
-    retry_cnt=$((retry_cnt + 1))
-    if [ "$retry_cnt" -gt "$max_retry" ]; then
-      echo_date "❌检测 Admin password 超时 $max_retry 次, 终止脚本执行!"
-      exit 1
-    fi
-    echo_date "ℹ️未检测到 Admin password, 等待5s... (第 $retry_cnt 次)"
-    sleep 5
-  done
-  local PASS=$(grep " Admin password: " ${CloudreveBaseDir}/admin.account | awk '{print $6}')
-  local encrypted_pass=$(sqlite3 "$DB_FILE" "SELECT password FROM users WHERE group_id = 1;")
-  while [ -z $encrypted_pass ]; do
-    encrypted_pass=$(sqlite3 "$DB_FILE" "SELECT password FROM users WHERE group_id = 1;")
-    echo_date "ℹ️新密码还未写入数据库, 等待5s..."
-    sleep 5
-  done
-  killall cloudreve
-  sqlite3 "${DB_FILE}.bak" "UPDATE users SET password = '$encrypted_pass' WHERE group_id = 1;"
-  if [ -n "${USER}" -a -n "${PASS}" -a -n "${encrypted_pass}" ]; then
-    echo_date "---------------------------------"
-    echo_date "😛cloudreve面板用户: ${USER}"
-    echo_date "🔑cloudreve面板密码: ${PASS}"
-    echo_date "---------------------------------"
-  else
-    echo_date "⚠️面板账号密码获取失败!请重新生成!"
-  fi
-  mv -f "${DB_FILE}.bak" "${DB_FILE}"
-  # 3. 重启进程
-  start >/dev/null 2>&1
-  echo_date "✅重启成功!"
-  rm -rf "${CloudreveBaseDir}/admin.account"
-}
-
 check_status() {
   local CLOUDREVE_PID=$(pidof cloudreve)
   if [ "${cloudreve_enable}" == "1" ]; then
@@ -596,7 +541,7 @@ check_status() {
 case $1 in
 start)
   if [ "${cloudreve_enable}" == "1" ]; then
-    sleep 20 #延迟启动等待虚拟内存挂载
+    sleep 20 # 延迟启动等待虚拟内存挂载
     true >${LOG_FILE}
     start | tee -a ${LOG_FILE}
     echo XU6J03M16 >>${LOG_FILE}
@@ -642,9 +587,6 @@ web_submit)
     echo_date "🔁重启cloudreve!" | tee -a ${LOG_FILE}
     dbus set cloudreve_enable=1
     start | tee -a ${LOG_FILE}
-  elif [ "${cloudreve_enable}" == "3" ]; then
-    dbus set cloudreve_enable=1
-    random_password | tee -a ${LOG_FILE}
   else
     echo_date "ℹ️停止 cloudreve!" | tee -a ${LOG_FILE}
     stop_plugin | tee -a ${LOG_FILE}
