@@ -335,7 +335,7 @@ normalize_path() {
 }
 
 start() {
-  # 3. stop first
+  # stop first
   stop_process
 
   # fix input path
@@ -343,7 +343,7 @@ start() {
   cloudreve_work_dir=$(normalize_path ${cloudreve_work_dir})
   dbus set cloudreve_work_dir=${cloudreve_work_dir}
 
-  # 0. prepare folder if not exist
+  # prepare folder if not exist
   if [ "${CloudreveBaseDir}" != "${cloudreve_work_dir}" ]; then
     echo_date "➡️正在转移部署目录..."
     mkdir -p "${CloudreveBaseDir}_tmp"
@@ -364,26 +364,26 @@ start() {
     fi
   fi
 
-  # 1. remove error
+  # remove error
   dbus_rm cloudreve_cert_error
   dbus_rm cloudreve_key_error
   dbus_rm cloudreve_memory_error
   dbus_rm cloudreve_memory_warn
 
-  # 2. system_check
+  # system_check
   if [ "${cloudreve_disablecheck}" = "1" ]; then
     echo_date "⚠️您已关闭系统检测功能, 请自行留意路由器性能!"
     echo_date "⚠️插件对路由器性能的影响请您自行处理!!!"
   else
     echo_date "==================== 系统检测 ===================="
-    #2.1 memory_check
+    # memory_check
     check_memory
-    #2.2 enable_plugin
+    # enable_plugin
     check_enable_plugin
     echo_date "==================== 系统检测结束 ===================="
   fi
 
-  # 5. 检测首次运行, 给出账号密码
+  # 检测首次运行, 给出账号密码
   if [ ! -f "${CloudreveBaseDir}/cloudreve.db" ] || [ ! -f "${CloudreveBaseDir}/conf.ini" ]; then
     rm -rf "${CloudreveBaseDir}/admin.account"
     nohup "${CloudreveBaseDir}/cloudreve" >"${CloudreveBaseDir}/admin.account" 2>&1 &
@@ -430,13 +430,13 @@ start() {
     rm -rf "${CloudreveBaseDir}/admin.account"
   fi
 
-  # 4. gen config.json
+  # gen config.json
   makeConfig
 
-  # 7. start process
+  # start process
   start_process
 
-  # 8. open port
+  # open port
   if [ "${cloudreve_publicswitch}" == "1" ]; then
     close_port >/dev/null 2>&1
     open_port
@@ -475,11 +475,11 @@ stop_process() {
 }
 
 stop_plugin() {
-  # 1 stop cloudreve
+  # stop cloudreve
   stop_process
-  # 2. remove log
+  # remove log
   rm -rf /tmp/upload/cloudreve_run_log.txt
-  # 3. close port
+  # close port
   close_port
 }
 
@@ -545,11 +545,11 @@ close_port() {
 }
 
 rand_pass() {
-  # 2. 关闭server进程
+  # 关闭server进程
   echo_date "重启cloudreve进程..."
   stop_process >/dev/null 2>&1
 
-  # 1. 重新生成密码
+  # 重新生成密码
   echo_date "🔍重新生成cloudreve面板的用户和随机密码..."
   rm -rf "${CloudreveBaseDir}/admin.account"
   local DB_FILE=$CloudreveBaseDir"/cloudreve.db"
@@ -592,7 +592,7 @@ rand_pass() {
     echo_date "⚠️面板账号密码获取失败!请重新生成!"
   fi
   mv -f "${DB_FILE}.bak" "${DB_FILE}"
-  # 3. 重启进程
+  # 重启进程
   start >/dev/null 2>&1
   echo_date "✅重启成功!"
   rm -rf "${CloudreveBaseDir}/admin.account"
@@ -623,7 +623,7 @@ check_status() {
 case $1 in
 start)
   if [ "${cloudreve_enable}" == "1" ]; then
-    sleep 20 #延迟启动等待虚拟内存挂载
+    sleep 20 # 延迟启动等待虚拟内存挂载
     true >${LOG_FILE}
     start | tee -a ${LOG_FILE}
     echo XU6J03M16 >>${LOG_FILE}
