@@ -395,20 +395,6 @@ start() {
   if [ ! -f "${CloudreveBaseDir}/cloudreve.db" ] || [ ! -f "${CloudreveBaseDir}/conf.ini" ]; then
     rm -rf "${CloudreveBaseDir}/admin.account"
     nohup "${CloudreveBaseDir}/cloudreve" >"${CloudreveBaseDir}/admin.account" 2>&1 &
-    if [ ! -f "${CloudreveBaseDir}/conf.ini" ]; then
-      echo_date "ℹ️检测到 conf.ini 缺失, 通过启动 cloudreve 自动生成..."
-      retry_cnt=0
-      while [ ! -f "${CloudreveBaseDir}/conf.ini" ]; do
-        echo_date "ℹ️等 1s 待 conf.ini 文件生成..."
-        sleep 1
-        retry_cnt=$((retry_cnt + 1))
-        if [ "$retry_cnt" -gt "$MAX_RETRY" ]; then
-          echo_date "❌等待 conf.ini 超时 $MAX_RETRY 次, 终止脚本执行!"
-          stop_plugin
-          exit 1
-        fi
-      done
-    fi
     if [ ! -f "${CloudreveBaseDir}/cloudreve.db" ]; then
       echo_date "ℹ️检测到首次启动插件, 生成用户和密码..."
       retry_cnt=0
@@ -430,6 +416,20 @@ start() {
         echo_date "🔑cloudreve面板密码: ${PASS}"
         echo_date "---------------------------------"
       fi
+    fi
+    if [ ! -f "${CloudreveBaseDir}/conf.ini" ]; then
+      echo_date "ℹ️检测到 conf.ini 缺失, 通过启动 cloudreve 自动生成..."
+      retry_cnt=0
+      while [ ! -f "${CloudreveBaseDir}/conf.ini" ]; do
+        echo_date "ℹ️等 1s 待 conf.ini 文件生成..."
+        sleep 1
+        retry_cnt=$((retry_cnt + 1))
+        if [ "$retry_cnt" -gt "$MAX_RETRY" ]; then
+          echo_date "❌等待 conf.ini 超时 $MAX_RETRY 次, 终止脚本执行!"
+          stop_plugin
+          exit 1
+        fi
+      done
     fi
     killall cloudreve
     local BIN_VER=$(grep "   V" ${CloudreveBaseDir}/admin.account | awk '{print $1}')
