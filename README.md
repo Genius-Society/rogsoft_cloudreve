@@ -71,6 +71,7 @@ conda activate py311
 
 ## Windows 上打包
 ```bash
+# 将 git bash 和 7z 的环境变量要配置好重启
 python build.py
 ```
 
