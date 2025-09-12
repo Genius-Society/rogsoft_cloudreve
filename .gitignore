@@ -163,4 +163,4 @@ cython_debug/
 test.*
 blacks.js
 rename.sh
-*.tar.gz*
+*.tar*
