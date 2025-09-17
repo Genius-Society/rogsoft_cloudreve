@@ -106,7 +106,7 @@ dbus_nset() {
 install_now() {
 	# default value
 	local TITLE="Cloudreve"
-	local DESCR="一个公私兼备的网盘系统，使用 Go 和 DBMS 开发"
+	local DESCR="一个公私兼备的网盘系统，使用 Go 和 DBMS 驱动"
 	local PLVER=$(cat ${DIR}/version)
 
 	# stop signdog first
