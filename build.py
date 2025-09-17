@@ -2,7 +2,7 @@ import os
 import subprocess
 
 
-def CRLF2LF():
+def rm_cr():
     print("CRLF 转 LF")
     subprocess.run(
         [
@@ -31,7 +31,7 @@ def pack(module_name: str):
 
 if __name__ == "__main__":
     try:
-        CRLF2LF()
+        rm_cr()
         pack("cloudreve")
 
     except Exception as e:
