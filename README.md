@@ -78,3 +78,4 @@ python build.py
 ## 致谢
 - <https://github.com/koolshare/rogsoft>
 - <https://github.com/everstu/Koolcenter_alist>
+- <https://github.com/cloudreve/cloudreve/releases/tag/3.8.3>
