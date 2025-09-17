@@ -774,7 +774,7 @@
 										<div class="SimpleNote">
 											<a href="https://github.com/cloudreve/Cloudreve"
 												target="_blank"><em><u>Cloudreve</u></em></a>&nbsp;一个部署公私兼备的网盘系统, 使用 Go
-											和 DBMS 开发
+											和 DBMS 驱动
 											<span><a type="button"
 													href="https://sourceforge.net/projects/rogsoft-cloudreve"
 													target="_blank" class="ks_btn"
