@@ -164,3 +164,4 @@ test.*
 blacks.js
 rename.sh
 *.tar*
+cloudreve/bin/cloudreve
