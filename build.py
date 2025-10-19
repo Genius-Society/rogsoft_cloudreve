@@ -22,7 +22,7 @@ def latest_release(repo):
 def remote_sha256(ver: str, url: str):
     txt = urllib.request.urlopen(f"{url}/checksums.txt").read().decode()
     return re.search(
-        rf"^([a-f0-9]{{64}})\s+cloudreve_{ver}_darwin_arm64\.tar\.gz$",
+        rf"^([a-f0-9]{{64}})\s+cloudreve_{ver}_linux_arm64\.tar\.gz$",
         txt,
         re.M,
     ).group(1)
@@ -54,7 +54,7 @@ def download(ver: str, url: str, dld_to: str, sha256: str):
     print("正在下载 ...")
     os.makedirs(os.path.dirname(dld_to), exist_ok=True)
     urllib.request.urlretrieve(
-        f"{url}/cloudreve_{ver}_darwin_arm64.tar.gz",
+        f"{url}/cloudreve_{ver}_linux_arm64.tar.gz",
         dld_file,
         reporthook=lambda b, bsize, tsize: print(
             f"\r{b * bsize / 1024 / 1024:.1f} MB / {tsize / 1024 / 1024:.1f} MB",
@@ -109,7 +109,12 @@ def release(proj_name="cloudreve", repo_name="cloudreve/cloudreve"):
         tar = download(ver, url, f"./__pycache__/{sha256}.tar.gz", sha256)
         extract(tar, "./__pycache__")
         os.makedirs(f"./{proj_name}/bin", exist_ok=True)
-        os.rename(f"./__pycache__/{proj_name}", f"./{proj_name}/bin/{proj_name}")
+        dst = f"./{proj_name}/bin/{proj_name}"
+        dst_path = Path(dst)
+        if dst_path.exists():
+            dst_path.unlink()
+
+        os.rename(f"./__pycache__/{proj_name}", dst)
         with open(f"./{proj_name}/version", "w", encoding="utf-8") as f:
             f.write(ver)
 
