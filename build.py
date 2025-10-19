@@ -102,12 +102,13 @@ def pack(module_name: str):
     return f"./{output}"
 
 
-def release(proj_name="cloudreve"):
+def release(proj_name="cloudreve", repo_name="cloudreve/cloudreve"):
     try:
-        ver, url = latest_release("cloudreve/cloudreve")
+        ver, url = latest_release(repo_name)
         sha256 = remote_sha256(ver, url)
         tar = download(ver, url, f"./__pycache__/{sha256}.tar.gz", sha256)
         extract(tar, "./__pycache__")
+        os.makedirs(f"./{proj_name}/bin", exist_ok=True)
         os.rename(f"./__pycache__/{proj_name}", f"./{proj_name}/bin/{proj_name}")
         with open(f"./{proj_name}/version", "w", encoding="utf-8") as f:
             f.write(ver)
@@ -116,7 +117,7 @@ def release(proj_name="cloudreve"):
         pack(proj_name)
 
     except Exception as e:
-        print(f"打包出错: {e}")
+        print(f"发布出错: {e}")
 
 
 if __name__ == "__main__":
