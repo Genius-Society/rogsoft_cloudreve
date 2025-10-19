@@ -933,7 +933,7 @@
 												onClick="save(0)" type="button" value="关闭" />
 										</div>
 										<div style="margin: 10px 0 10px 5px;" class="splitLine"></div>
-										<div style="margin:10px 0 0 5px">
+										<div style="margin:10px 0 0 20px">
 											<li>由于cloudreve需要路由器较好性能, 本插件仅支持hnd平台, AX32机型请慎重使用!</li>
 											<li>建议挂载U盘并配合usb2jffs和虚拟内存插件一起食用, 口感更佳, 否则可能会出现莫名的问题</li>
 											<li>如有不懂, 特别是cloudreve配置文件的填写, 请查看Cloudreve官方文档<a
