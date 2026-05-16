@@ -1,0 +1,32 @@
+name: Auto Release
+
+on:
+  schedule:
+    - cron: "0 19 * * *" # 每天 UTC 时间 19:00 (北京时间 3:00~4:15) 触发一次
+  workflow_dispatch: # 允许手动触发
+
+permissions:
+  contents: write
+
+jobs:
+  sync-file:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check Binary Update
+        env:
+          GIT_TOKEN: ${{ secrets.GIT_TOKEN }}
+          GIT_NAME: ${{ secrets.GIT_NAME }}
+          GIT_EMAIL: ${{ secrets.GIT_EMAIL }}
+        run: |
+          python build.py
+          if [ -n "$(git status --porcelain)" ]; then
+            echo "Files are different, committing changes..."
+            git config --global user.name "$GIT_NAME"
+            git config --global user.email "$GIT_EMAIL"
+            git add .
+            git commit -m "Update Version at $(date '+%Y-%m-%d %H:%M:%S')"
+            git push
+            python ./.github/release.py --token "$GIT_TOKEN" --ver "$(cat ./cloudreve/version)"
+          else
+            echo "Files are the same, no changes."
+          fi
