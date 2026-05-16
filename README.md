@@ -1,5 +1,6 @@
 # Cloudreve for asuswrt
 [![license](https://img.shields.io/github/license/Genius-Society/rogsoft_cloudreve.svg)](./LICENSE)
+[![github-action](https://github.com/Genius-Society/rogsoft_cloudreve/actions/workflows/auto-release.yml/badge.svg?branch=main)](https://github.com/Genius-Society/rogsoft_cloudreve/actions/workflows/auto-release.yml)
 [![sf](https://img.shields.io/badge/release-SourceForge-ff6600.svg)](https://sourceforge.net/projects/rogsoft-cloudreve/files)
 [![bili](https://img.shields.io/badge/bilibili-BV18ergYRERP-fc8bab.svg)](https://www.bilibili.com/video/BV18ergYRERP)
 
