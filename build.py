@@ -82,7 +82,7 @@ def rm_cr():
             [
                 "bash",
                 "-c",
-                "find './' -type f -name '*.sh' -exec sed -i 's/\r$//' {} \;",
+                r"find './' -type f -name '*.sh' -exec sed -i 's/\r$//' {} \;",
             ],
             check=True,
         )
