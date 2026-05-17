@@ -19,8 +19,7 @@ jobs:
           GIT_EMAIL: ${{ secrets.GIT_EMAIL }}
           WK_DIR: ${{ github.workspace }}
         run: |
-          cd "$WK_DIR"
-          python ./build.py
+          python $WK_DIR/build.py
           if [ -n "$(git status --porcelain)" ]; then
             echo "Files are different, committing changes..."
             git config --global user.name "$GIT_NAME"
@@ -28,7 +27,7 @@ jobs:
             git add .
             git commit -m "Update Version at $(date '+%Y-%m-%d %H:%M:%S')"
             git push
-            python ./.github/release.py --token "$GIT_TOKEN" --ver "$(cat ./cloudreve/version)"
+            python $WK_DIR/.github/release.py --token "$GIT_TOKEN" --ver "$(cat $WK_DIR/cloudreve/version)"
           else
             echo "Files are the same, no changes."
           fi
