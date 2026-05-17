@@ -12,14 +12,18 @@ jobs:
   sync-file:
     runs-on: ubuntu-latest
     steps:
+      # Step 1: 检出当前仓库代码
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      # Step 2: 发布至 GitHub
       - name: Check Binary Update
         env:
           GIT_TOKEN: ${{ secrets.GIT_TOKEN }}
           GIT_NAME: ${{ secrets.GIT_NAME }}
           GIT_EMAIL: ${{ secrets.GIT_EMAIL }}
-          WK_DIR: ${{ github.workspace }}
         run: |
-          python $WK_DIR/build.py
+          python ./build.py
           if [ -n "$(git status --porcelain)" ]; then
             echo "Files are different, committing changes..."
             git config --global user.name "$GIT_NAME"
@@ -27,7 +31,7 @@ jobs:
             git add .
             git commit -m "Update Version at $(date '+%Y-%m-%d %H:%M:%S')"
             git push
-            python $WK_DIR/.github/release.py --token "$GIT_TOKEN" --ver "$(cat $WK_DIR/cloudreve/version)"
+            python ./.github/release.py --token "$GIT_TOKEN" --ver "$(cat ./cloudreve/version)"
           else
             echo "Files are the same, no changes."
           fi
