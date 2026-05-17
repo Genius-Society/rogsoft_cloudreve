@@ -76,15 +76,16 @@ def extract(fpath: str, extracto: str):
 
 
 def rm_cr():
-    print("CRLF 转 LF")
-    subprocess.run(
-        [
-            "bash",
-            "-c",
-            "find './' -type f -name '*.sh' -exec sed -i 's/\r$//' {} \;",
-        ],
-        check=True,
-    )
+    if os.name == "nt":
+        print("CRLF 转 LF")
+        subprocess.run(
+            [
+                "bash",
+                "-c",
+                "find './' -type f -name '*.sh' -exec sed -i 's/\r$//' {} \;",
+            ],
+            check=True,
+        )
 
 
 def pack(module_name: str):
