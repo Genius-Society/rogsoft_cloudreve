@@ -68,11 +68,11 @@ detect_running_status() {
 		i=$(($i - 1))
 		PID=$(pidof ${BINNAME})
 		if [ "$i" -lt 1 ]; then
-			echo_date "🔴$1进程启动失败, 请检查你的配置!"
+			echo_date "🔴${1}进程启动失败, 请检查你的配置!"
 			return
 		fi
 	done
-	echo_date "🟢$1启动成功, pid: ${PID}"
+	echo_date "🟢${1}启动成功, pid: ${PID}"
 }
 
 check_usb2jffs_used_status() {
@@ -412,7 +412,7 @@ start() {
 		killall cloudreve
 		local BIN_VER=$(grep "   V" ${CloudreveBaseDir}/admin.account | awk '{print $1}')
 		BIN_VER=$(echo "$BIN_VER" | cut -c 2-)
-		dbus set cloudreve_binver=$BIN_VER
+		dbus set cloudreve_version=$BIN_VER
 		rm -rf "${CloudreveBaseDir}/admin.account"
 	fi
 
@@ -442,7 +442,7 @@ start() {
 	done
 	local BIN_VER=$(grep "   V" /tmp/upload/cloudreve_run_log.txt | awk '{print $1}')
 	BIN_VER=$(echo "$BIN_VER" | cut -c 2-)
-	dbus set cloudreve_binver=$BIN_VER
+	dbus set cloudreve_version=$BIN_VER
 	echo_date "✅成功获取二进制程序版本号: $BIN_VER"
 }
 
@@ -556,6 +556,24 @@ check_ver() {
 	http_response $(curl -s https://raw.githubusercontent.com/Genius-Society/rogsoft_cloudreve/refs/heads/main/cloudreve/version)
 }
 
+update() {
+	local local_ver=$(dbus get cloudreve_version)
+	local latest_ver=$(curl -s https://raw.githubusercontent.com/Genius-Society/rogsoft_cloudreve/refs/heads/main/cloudreve/version)
+	if [ "${local_ver}" == "${latest_ver}" ]; then
+		echo_date "cloudreve 已是最新版本, 无需更新!"
+	else
+		local status=$(curl -x http://127.0.0.1:23456 -s -o /dev/null -w "%{http_code}" https://github.com)
+		if [ "${status}" == "200" ]; then
+			wget --no-hsts -c -t 0 -T 30 -e use_proxy=yes -e https_proxy=http://127.0.0.1:23456 -O /tmp/upload/cloudreve.tar.gz "https://github.com/Genius-Society/rogsoft_cloudreve/releases/download/${latest_ver}/cloudreve.tar.gz" 2>&1
+		else
+			wget --no-hsts -c -t 0 -T 30 -O /tmp/upload/cloudreve.tar.gz "https://github.com/Genius-Society/rogsoft_cloudreve/releases/download/${latest_ver}/cloudreve.tar.gz" 2>&1
+		fi
+		dbus set soft_name=cloudreve.tar.gz
+		sh /koolshare/scripts/ks_tar_install.sh >/dev/null 2>&1
+		echo_date "cloudreve 插件已更新!"
+	fi
+}
+
 case $1 in
 start)
 	if [ "${cloudreve_enable}" == "1" ]; then
@@ -605,6 +623,10 @@ web_submit)
 		echo_date "🔁重启cloudreve!" | tee -a ${LOG_FILE}
 		dbus set cloudreve_enable=1
 		start | tee -a ${LOG_FILE}
+	elif [ "${cloudreve_enable}" == "3" ]; then
+		echo_date "🔼更新cloudreve!" | tee -a ${LOG_FILE}
+		dbus set cloudreve_enable=1
+		update | tee -a ${LOG_FILE}
 	else
 		echo_date "ℹ️停止 cloudreve!" | tee -a ${LOG_FILE}
 		stop_plugin | tee -a ${LOG_FILE}

@@ -55,13 +55,11 @@
 			width: 100%;
 			height: 100%;
 			z-index: 99;
-			/*background-color: #444F53;*/
 			filter: alpha(opacity=90);
 			/*IE5、IE5.5、IE6、IE7*/
 			background-repeat: repeat;
 			visibility: hidden;
 			overflow: hidden;
-			/*background: url(/images/New_ui/login_bg.png);*/
 			background: rgba(68, 79, 83, 0.85) none repeat scroll 0 0 !important;
 			background-position: 0 0;
 			background-size: cover;
@@ -71,7 +69,6 @@
 		.FormTitle em {
 			color: #00ffe4;
 			font-style: normal;
-			/*font-weight:bold;*/
 		}
 
 		.FormTable th {
@@ -95,6 +92,10 @@
 		.FormTable_table thead td {
 			font-size: 14px;
 			font-family: Roboto-Light, "Microsoft JhengHei";
+		}
+
+		#upd {
+			display: none;
 		}
 	</style>
 	<script type="text/javascript">
@@ -133,6 +134,7 @@
 			register_event();
 			get_dbus_data();
 			check_status();
+			check_ver();
 		}
 		function set_skin() {
 			var SKN = '<% nvram_get("sc_skin"); %>';
@@ -189,26 +191,17 @@
 		}
 
 		/*判断是否是内网IP*/
-		function isInnerIPFn() {
-			// 获取当前页面url
+		function isInnerIPFn() { // 获取当前页面url
 			var curPageUrl = window.location.href;
 			console.log('curPageUrl-0  ' + curPageUrl);
-
-			var reg1 = /(http|ftp|https|www):\/\//g;//去掉前缀
+			var reg1 = /(http|ftp|https|www):\/\//g; // 去掉前缀
 			curPageUrl = curPageUrl.replace(reg1, '');
-			// console.log('curPageUrl-1  '+curPageUrl);
-
-			var reg2 = /\:+/g;//替换冒号为一点
+			var reg2 = /\:+/g; // 替换冒号为一点
 			curPageUrl = curPageUrl.replace(reg2, '.');
-			// console.log('curPageUrl-2  '+curPageUrl);
-
-			curPageUrl = curPageUrl.split('.');//通过一点来划分数组
+			curPageUrl = curPageUrl.split('.'); // 通过一点来划分数组
 			console.log(curPageUrl);
-
-
 			var ipAddress = curPageUrl[0] + '.' + curPageUrl[1] + '.' + curPageUrl[2] + '.' + curPageUrl[3];
-
-			var isInnerIp = false;//默认给定IP不是内网IP
+			var isInnerIp = false; // 默认给定IP不是内网IP
 			var ipNum = getIpNum(ipAddress);
 			/**
 			 * 私有IP: A类  10.0.0.0    -10.255.255.255
@@ -225,7 +218,6 @@
 			var dBegin = getIpNum("127.0.0.0");
 			var dEnd = getIpNum("127.255.255.255");
 			isInnerIp = isInner(ipNum, aBegin, aEnd) || isInner(ipNum, bBegin, bEnd) || isInner(ipNum, cBegin, cEnd) || isInner(ipNum, dBegin, dEnd);
-			//     console.log('是否是内网:'+isInnerIp);
 			return isInnerIp;
 		}
 
@@ -813,6 +805,10 @@
 													<td>
 														<span style="margin-left:4px" id="cloudreve_binver"></span>
 														<span style="margin-left:4px" id="cloudreve_gitver"></span>
+														<div id="upd" style="float: right;"><span><a type="button"
+																	href="javascript:void(0);" onclick="save(3)"
+																	class="ks_btn"
+																	style="margin-left:5px;">更新插件</a></span></div>
 													</td>
 												</tr>
 												<tr id="cloudreve_info_tr" style="display: none;">
