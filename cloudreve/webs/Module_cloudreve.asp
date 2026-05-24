@@ -568,10 +568,16 @@
 				_caption = "运行状态";
 			}
 			if (itemNum == 2) {
-				statusmenu = "&nbsp;&nbsp;&nbsp;&nbsp;1. 此处显示cloudreve二进制程序的版本号及其内置的cloudreve面板版本号。<br/><br/>"
+				statusmenu = "&nbsp;&nbsp;&nbsp;&nbsp;1. 此处显示当前cloudreve插件版本号及云端最新版本号, 插件版本号与cloudreve二进制版本号同号。<br/><br/>"
 				statusmenu += "&nbsp;&nbsp;&nbsp;&nbsp;2. cloudreve二进制程序下载自cloudreve的github项目release页面的cloudreve-linux-arm64版本。<br/><br/>"
 				statusmenu += "&nbsp;&nbsp;&nbsp;&nbsp;3.目前只支持hnd机型中的armv8机型, 比如cpu型号为BCM4906、BCM4908、BCM4912等armv8机型。<br/><br/>"
-				_caption = "运行状态";
+				_caption = "版本信息";
+			}
+			if (itemNum == 3) {
+				statusmenu = "! ! ! 请注意: v4版本后取消后台密码重置功能!<br/><br/>"
+				statusmenu += "&nbsp;&nbsp;&nbsp;&nbsp;管理员用户使用邮箱注册, 可通过邮箱验证码重置密码。<br/><br/>"
+				statusmenu += "&nbsp;&nbsp;&nbsp;&nbsp;点击【Cloudreve运行日志】可以实时查看cloudreve程序的运行情况。"
+				_caption = "信息获取";
 			}
 			if (itemNum == 4) {
 				width = "780px";
