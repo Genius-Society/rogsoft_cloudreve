@@ -567,7 +567,7 @@
 				statusmenu = "&nbsp;&nbsp;&nbsp;&nbsp;1. 此处显示cloudreve二进制程序的版本号及其内置的cloudreve面板版本号。<br/><br/>"
 				statusmenu += "&nbsp;&nbsp;&nbsp;&nbsp;2. cloudreve二进制程序下载自cloudreve的github项目release页面的cloudreve-linux-arm64版本。<br/><br/>"
 				statusmenu += "&nbsp;&nbsp;&nbsp;&nbsp;3.目前只支持hnd机型中的armv8机型, 比如cpu型号为BCM4906、BCM4908、BCM4912等armv8机型。<br/><br/>"
-				_caption = "运行状态";
+				_caption = "版本信息";
 			}
 			if (itemNum == 3) {
 				statusmenu = "!!!请注意: 不允许查看密码, 只能重新生成! 若修改后未生效可重试。<br/><br/>"
@@ -698,7 +698,7 @@
 				<td height="100">
 					<div id="loading_block_title" style="margin:10px auto;margin-left:10px;width:85%; font-size:12pt;">
 					</div>
-					<div id="loading_block_spilt" style="margin:10px 0 10px 5px;" class="loading_block_spilt">
+					<div id="loading_block_spilt" style="margin:10px 0 10px 30px;" class="loading_block_spilt">
 						<li>
 							<font color="#ffcc00">请等待日志显示完毕, 并出现自动关闭按钮!</font>
 						</li>
@@ -775,12 +775,6 @@
 											<a href="https://github.com/cloudreve/Cloudreve"
 												target="_blank"><em><u>Cloudreve</u></em></a>&nbsp;一个部署公私兼备的网盘系统, 使用 Go
 											和 DBMS 驱动
-											<span><a type="button"
-													href="https://sourceforge.net/projects/rogsoft-cloudreve"
-													target="_blank" class="ks_btn"
-													style="margin-left:5px;">更新日志</a></span>
-											<span><a type="button" class="ks_btn" href="javascript:void(0);"
-													onclick="get_log(1)" style="margin-left:5px;">插件日志</a></span>
 										</div>
 										<div id="cloudreve_status_pannel">
 											<table width="100%" border="1" align="center" cellpadding="4"
@@ -795,6 +789,9 @@
 															class="hintstyle" href="javascript:void(0);">运行状态</a></th>
 													<td>
 														<span style="margin-left:4px" id="cloudreve_status"></span>
+														<div style="float: right;"><span><a type="button" class="ks_btn"
+																	href="javascript:void(0);" onclick="get_log(1)"
+																	style="margin-left:5px;">插件日志</a></span></div>
 													</td>
 												</tr>
 												<tr id="cloudreve_version_tr" style="display: none;">
@@ -803,6 +800,10 @@
 													<td>
 														<span style="margin-left:4px" id="cloudreve_binver"></span>
 														<span style="margin-left:4px" id="cloudreve_webver"></span>
+														<div style="float: right;"><span><a type="button"
+																	href="https://sourceforge.net/projects/rogsoft-cloudreve/files/v3.8.3"
+																	target="_blank" class="ks_btn"
+																	style="margin-left:5px;">更新日志</a></span></div>
 													</td>
 												</tr>
 												<tr id="cloudreve_info_tr" style="display: none;">
@@ -942,12 +943,11 @@
 												onClick="save(0)" type="button" value="关闭" />
 										</div>
 										<div style="margin: 10px 0 10px 5px;" class="splitLine"></div>
-										<div style="margin:10px 0 0 5px">
-											<li>由于cloudreve需要路由器较好性能, 本插件仅支持hnd平台, AX32机型请慎重使用!</li>
-											<li>建议挂载U盘并配合usb2jffs和虚拟内存插件一起食用, 口感更佳, 否则可能会出现莫名的问题</li>
-											<li>如有不懂, 特别是cloudreve配置文件的填写, 请查看Cloudreve官方文档<a
-													href="https://docs.cloudreve.org/"
-													target="_blank"><em>点这里看文档</em></a></li>
+										<div style="margin:10px 0 0 20px">
+											<li>由于 cloudreve 需要路由器较好性能, 本插件仅支持 hnd 平台, AX32 机型请慎重使用!</li>
+											<li>建议挂载U盘并配合 usb2jffs 和虚拟内存插件一起食用, 口感更佳, 否则可能会出现莫名的问题</li>
+											<li>如有不懂, 特别是 cloudreve 配置文件的填写, 请查看 <a href="https://docs.cloudreve.org/"
+													target="_blank"><em>Cloudreve官方文档</em></a></li>
 										</div>
 									</td>
 								</tr>
