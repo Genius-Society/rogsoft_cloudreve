@@ -256,18 +256,7 @@
 			}
 			if (dbus["cloudreve_version"]) {
 				E("cloudreve_version").innerHTML = " - " + dbus["cloudreve_version"];
-			}
-
-			if (dbus["cloudreve_binver"]) {
-				E("cloudreve_binver").innerHTML = "程序版本: <em>" + dbus["cloudreve_binver"] + "</em>";
-			} else {
-				E("cloudreve_binver").innerHTML = "程序版本: <em>null</em>";
-			}
-
-			if (dbus["cloudreve_version"]) {
-				E("cloudreve_webver").innerHTML = "面板版本: <em>" + dbus["cloudreve_version"] + "</em>";
-			} else {
-				E("cloudreve_webver").innerHTML = "面板版本: <em>null</em>";
+				E("cloudreve_binver").innerHTML = "当前版本: <em>v" + dbus["cloudreve_version"] + "</em>";
 			}
 		}
 
@@ -376,6 +365,30 @@
 				error: function () {
 					E("cloudreve_status").innerHTML = "获取运行状态失败";
 					setTimeout("check_status();", 5000);
+				}
+			});
+		}
+
+		function check_ver() {
+			var id = parseInt(Math.random() * 100000000);
+			var postData = { "id": id, "method": "cloudreve_config.sh", "params": ['ver'], "fields": "" };
+			$.ajax({
+				type: "POST",
+				url: "/_api/",
+				async: true,
+				data: JSON.stringify(postData),
+				success: function (response) {
+					var gitver = response.result;
+					if (gitver == dbus["cloudreve_version"]) {
+						E("cloudreve_gitver").innerHTML = "最新版本: <em>v" + gitver + "</em>";
+					}
+					else {
+						E("cloudreve_gitver").innerHTML = "最新版本: <em style='color: orangered'>v" + gitver + "</em>";
+						$("#upd").show();
+					}
+				},
+				error: function () {
+					E("cloudreve_gitver").innerHTML = "最新版本: <em>null</em>";
 				}
 			});
 		}
@@ -640,7 +653,7 @@
 			}
 			if (itemNum == 10) {
 				statusmenu = "&nbsp;&nbsp;&nbsp;&nbsp;开启系统检测功能可以防止因对路由器性能理解不足而出现的各种异常情况"
-				statusmenu += "<br/><br/>&nbsp;&nbsp;&nbsp;&nbsp;如果关闭系统检测，请确保可以理解并能处理路由器出现的各种异常情况"
+				statusmenu += "<br/><br/>&nbsp;&nbsp;&nbsp;&nbsp;如果关闭系统检测, 请确保可以理解并能处理路由器出现的各种异常情况"
 				statusmenu += "<br/><br/>&nbsp;&nbsp;&nbsp;&nbsp;目前检测项目："
 				statusmenu += "<br/><br/>&nbsp;&nbsp;&nbsp;&nbsp;内存大小和虚拟内存挂载情况 (物理内存低于1G, 强制挂载虚拟内存) "
 				statusmenu += "<br/><br/>&nbsp;&nbsp;&nbsp;&nbsp;已开启插件检测并提示"
@@ -766,15 +779,13 @@
 										<div style="margin: 10px 0 10px 5px;" class="splitLine"></div>
 										<div class="SimpleNote">
 											<a href="https://github.com/cloudreve/Cloudreve"
-												target="_blank"><em><u>Cloudreve</u></em></a>&nbsp;一个部署公私兼备的网盘系统，使用 Go
+												target="_blank"><em><u>Cloudreve</u></em></a>&nbsp;一个部署公私兼备的网盘系统, 使用 Go
 											和
 											DBMS 驱动
-											<span><a type="button"
-													href="https://sourceforge.net/projects/rogsoft-cloudreve"
-													target="_blank" class="ks_btn"
-													style="margin-left:5px;">更新日志</a></span>
-											<span><a type="button" class="ks_btn" href="javascript:void(0);"
-													onclick="get_log(1)" style="margin-left:5px;">插件日志</a></span>
+											<div style="float: right;"><span><a type="button"
+														href="https://github.com/Genius-Society/rogsoft_cloudreve/releases"
+														target="_blank" class="ks_btn"
+														style="margin-left:5px;">更新日志</a></span></div>
 										</div>
 										<div id="cloudreve_status_pannel">
 											<table width="100%" border="1" align="center" cellpadding="4"
@@ -789,6 +800,11 @@
 															class="hintstyle" href="javascript:void(0);">运行状态</a></th>
 													<td>
 														<span style="margin-left:4px" id="cloudreve_status"></span>
+														<div style="float: right;">
+															<span><a type="button" class="ks_btn"
+																	href="javascript:void(0);" onclick="get_log(1)"
+																	style="margin-left:5px;">插件日志</a></span>
+														</div>
 													</td>
 												</tr>
 												<tr id="cloudreve_version_tr" style="display: none;">
@@ -796,7 +812,7 @@
 															class="hintstyle" href="javascript:void(0);">版本信息</a></th>
 													<td>
 														<span style="margin-left:4px" id="cloudreve_binver"></span>
-														<span style="margin-left:4px" id="cloudreve_webver"></span>
+														<span style="margin-left:4px" id="cloudreve_gitver"></span>
 													</td>
 												</tr>
 												<tr id="cloudreve_info_tr" style="display: none;">
@@ -933,11 +949,10 @@
 										</div>
 										<div style="margin: 10px 0 10px 5px;" class="splitLine"></div>
 										<div style="margin:10px 0 0 20px">
-											<li>由于cloudreve需要路由器较好性能, 本插件仅支持hnd平台, AX32机型请慎重使用!</li>
-											<li>建议挂载U盘并配合usb2jffs和虚拟内存插件一起食用, 口感更佳, 否则可能会出现莫名的问题</li>
-											<li>如有不懂, 特别是cloudreve配置文件的填写, 请查看Cloudreve官方文档<a
-													href="https://docs.cloudreve.org/"
-													target="_blank"><em>点这里看文档</em></a></li>
+											<li>由于 cloudreve 需要路由器较好性能, 本插件仅支持hnd平台, AX32 机型请慎重使用!</li>
+											<li>建议挂载U盘并配合 usb2jffs 和虚拟内存插件一起食用, 口感更佳, 否则可能会出现莫名的问题</li>
+											<li>如有不懂, 特别是 cloudreve 配置文件的填写, 请查看 <a href="https://docs.cloudreve.org/"
+													target="_blank"><em>Cloudreve 官方文档</em></a></li>
 										</div>
 									</td>
 								</tr>
