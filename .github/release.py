@@ -1,13 +1,14 @@
+import os
 import argparse
 import requests
 
 
 class GitHubReleaseManager:
-    def __init__(self, repo: str, version: str, token: str):
-        self.repo = repo
-        self.name = repo.split("_")[-1].capitalize()
+    def __init__(self, version: str, token: str):
+        self.repo = os.getenv("GITHUB_REPOSITORY")
+        self.name = self.repo.split("_")[-1].capitalize()
         self.pkg = f"{self.name.lower()}.tar.gz"
-        self.endpoint = f"https://api.github.com/repos/{repo}"
+        self.endpoint = f"https://api.github.com/repos/{self.repo}"
         self.ver = version
         self.token = token
         self.header = {
@@ -21,7 +22,7 @@ class GitHubReleaseManager:
         tag_url = f"{self.endpoint}/git/refs/tags/{self.ver}"
         response = requests.get(tag_url, headers=self.header)
         if response.status_code == 404:
-            print(f"Git tag {self.ver} not found, nothing to delete.")
+            print(f"Tag {self.ver} not found, nothing to delete.")
             return release_url
 
         response.raise_for_status()
@@ -41,16 +42,16 @@ class GitHubReleaseManager:
                 headers=self.header,
             )
             if response.status_code == 204:
-                print(f"Successfully deleted release with tag {self.ver}.")
+                print(f"Releases with tag {self.ver} have successfully been deleted!")
             else:
                 response.raise_for_status()
 
         else:
-            print(f"No release found with tag {self.ver}, will delete the tag only.")
+            print(f"No release found with tag {self.ver}, only tag will be deleted.")
         # 3. 删除 tag
         response = requests.delete(tag_url, headers=self.header)
         if response.status_code == 204:
-            print(f"Successfully deleted Git tag {self.ver}.")
+            print(f"The tag {self.ver} has successfully been deleted!")
         else:
             response.raise_for_status()
 
@@ -86,7 +87,7 @@ class GitHubReleaseManager:
             )
 
         if response.status_code == 201:
-            print(f"Upload {self.pkg} success!")
+            print(f"{self.pkg} has successfully been uploaded!")
         else:
             response.raise_for_status()
 
@@ -109,8 +110,4 @@ if __name__ == "__main__":
     parser.add_argument("--ver", required=True, help="Release version")
     parser.add_argument("--token", required=True, help="Your GitHub Access Token")
     args = parser.parse_args()
-    GitHubReleaseManager(
-        "Genius-Society/rogsoft_cloudreve",
-        args.ver,
-        args.token,
-    ).publish_release()
+    GitHubReleaseManager(args.ver, args.token).publish_release()
