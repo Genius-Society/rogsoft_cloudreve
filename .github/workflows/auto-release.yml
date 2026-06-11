@@ -37,7 +37,7 @@ jobs:
             git add .
             git commit -m "Upd ver at $(date '+%Y-%m-%d %H:%M:%S')"
             git push
-            python ./.github/release.py --ver "$(cat ./cloudreve/version)" --token "$GIT_TOKEN"
+            python ./.github/release.py --ver "$(cat ./*/version)" --token "$GIT_TOKEN"
           else
             echo "Files are the same, no changes."
           fi
@@ -68,4 +68,4 @@ jobs:
           else
             echo "Files are the same, no changes."
           fi
-          python ./.github/release.py --ver "$(cat ./cloudreve/version)" --token "$GIT_TOKEN"
+          python ./.github/release.py --ver "$(cat ./*/version)" --token "$GIT_TOKEN"
