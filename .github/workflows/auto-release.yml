@@ -37,7 +37,7 @@ jobs:
             git add .
             git commit -m "Upd ver at $(date '+%Y-%m-%d %H:%M:%S')"
             git push
-            python ./.github/release.py --token "$GIT_TOKEN" --ver "$(cat ./cloudreve/version)"
+            python ./.github/release.py --ver "$(cat ./cloudreve/version)" --token "$GIT_TOKEN"
           else
             echo "Files are the same, no changes."
           fi
@@ -63,9 +63,9 @@ jobs:
             git config --global user.name "$GIT_NAME"
             git config --global user.email "$GIT_EMAIL"
             git add .
-            git commit -m "Update Version at $(date '+%Y-%m-%d %H:%M:%S')"
+            git commit -m "Upd ver at $(date '+%Y-%m-%d %H:%M:%S')"
             git push
           else
             echo "Files are the same, no changes."
           fi
-          python ./.github/release.py --token "$GIT_TOKEN" --ver "$(cat ./cloudreve/version)"
+          python ./.github/release.py --ver "$(cat ./cloudreve/version)" --token "$GIT_TOKEN"
