@@ -62,7 +62,7 @@ class GitHubReleaseManager:
 
         return release_url
 
-    def create_release(self, release_url: str, md5_txt="md5.txt") -> str:
+    def create_release(self, release_url: str, md5_txt="md5sum.txt") -> str:
         response = requests.post(
             release_url,
             headers=self.header,
