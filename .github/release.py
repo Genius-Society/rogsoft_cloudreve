@@ -1,3 +1,4 @@
+import hashlib
 import os
 import argparse
 import requests
@@ -14,6 +15,10 @@ class GitHubReleaseManager:
         self.header = {
             "Authorization": f"token {token}",
             "Accept": "application/vnd.github.v3+json",
+        }
+        self.headers = {
+            "Authorization": f"token {token}",
+            "Content-Type": "application/octet-stream",
         }
 
     def clean_release(self) -> str:
@@ -57,7 +62,7 @@ class GitHubReleaseManager:
 
         return release_url
 
-    def create_release(self, release_url: str) -> str:
+    def create_release(self, release_url: str, md5_txt="md5.txt") -> str:
         response = requests.post(
             release_url,
             headers=self.header,
@@ -79,15 +84,26 @@ class GitHubReleaseManager:
         with open(self.pkg, "rb") as f:
             response = requests.post(
                 f"{upl_url}?name={self.pkg}",
-                headers={
-                    "Authorization": f"token {self.token}",
-                    "Content-Type": "application/octet-stream",
-                },
+                headers=self.headers,
+                data=f,
+            )
+            md5 = hashlib.md5(f.read()).hexdigest()
+
+        if response.status_code != 201:
+            response.raise_for_status()
+
+        with open(md5_txt, "w", encoding="utf-8") as f:
+            f.write(md5)
+
+        with open(md5_txt, "rb") as f:
+            response = requests.post(
+                f"{upl_url}?name={md5_txt}",
+                headers=self.headers,
                 data=f,
             )
 
         if response.status_code == 201:
-            print(f"{self.pkg} has successfully been uploaded!")
+            print(f"{self.pkg} with md5 has successfully been uploaded!")
         else:
             response.raise_for_status()
 
