@@ -71,4 +71,4 @@ jobs:
           fi
           VERSION=$(cat ./*/version)
           python ./.github/release.py --ver "$VERSION" --token "$GIT_TOKEN"
-          sshpass -p "$SF_PASS" scp -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null cloudreve.tar.gz genius-society@frs.sourceforge.net:/home/frs/project/rogsoft-cloudreve/v"$VERSION"/
+          sshpass -p "$SF_PASS" rsync -avz -e "ssh -o StrictHostKeyChecking=no" cloudreve.tar.gz genius-society@frs.sourceforge.net:/home/frs/project/rogsoft-cloudreve/v"$VERSION"/
