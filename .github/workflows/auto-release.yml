@@ -56,6 +56,7 @@ jobs:
           GIT_TOKEN: ${{ secrets.GIT_TOKEN }}
           GIT_NAME: ${{ secrets.GIT_NAME }}
           GIT_EMAIL: ${{ secrets.GIT_EMAIL }}
+          SF_PASS: ${{ secrets.SF_PASS }}
         run: |
           python ./build.py
           if [ -n "$(git status --porcelain)" ]; then
@@ -68,4 +69,6 @@ jobs:
           else
             echo "Files are the same, no changes."
           fi
-          python ./.github/release.py --ver "$(cat ./*/version)" --token "$GIT_TOKEN"
+          VERSION=$(cat ./*/version)
+          python ./.github/release.py --ver "$VERSION" --token "$GIT_TOKEN"
+          sshpass -p "$SF_PASS" rsync -avP -e ssh cloudreve.tar.gz genius-society@frs.sourceforge.net:/home/frs/project/rogsoft-cloudreve/v"$VERSION"/
