@@ -7,7 +7,7 @@
 Cloudreve 网盘的 Koolcenter 软件中心插件版本
 
 <a href="https://github.com/Genius-Society/rogsoft_cloudreve" target="_blank">
-    <img src="./cloudreve/res/icon-cloudreve.png" style="width: 160px;">
+    <img src="https://github.com/Genius-Society/rogsoft_cloudreve/blob/main/cloudreve/res/icon-cloudreve.png?raw=true" style="width: 160px;">
 </a>
 
 ## Cloudreve 是什么?
