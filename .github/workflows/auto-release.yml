@@ -72,4 +72,6 @@ jobs:
             echo "Files are the same, no changes."
           fi
           python ./.github/release.py --ver "$VERSION" --token "$GIT_TOKEN"
-          sshpass -p "$SF_PASS" rsync -avz -e "ssh -o StrictHostKeyChecking=no" cloudreve.tar.gz genius-society@frs.sourceforge.net:/home/frs/project/rogsoft-cloudreve/v"$VERSION"/
+          mkdir v"$VERSION"
+          mv cloudreve.tar.gz ./v"$VERSION"
+          sshpass -p "$SF_PASS" rsync -avz -e "ssh -o StrictHostKeyChecking=no" LICENSE README.md v"$VERSION"/ genius-society@frs.sourceforge.net:/home/frs/project/rogsoft-cloudreve/
