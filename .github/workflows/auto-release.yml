@@ -74,4 +74,4 @@ jobs:
           python ./.github/release.py --ver "$VERSION" --token "$GIT_TOKEN"
           mkdir v"$VERSION"
           mv cloudreve.tar.gz ./v"$VERSION"
-          sshpass -p "$SF_PASS" rsync -avz -e "ssh -o StrictHostKeyChecking=no" LICENSE README.md v"$VERSION"/ genius-society@frs.sourceforge.net:/home/frs/project/rogsoft-cloudreve/
+          sshpass -p "$SF_PASS" rsync -avz -e "ssh -o StrictHostKeyChecking=no" LICENSE README.md v"$VERSION" genius-society@frs.sourceforge.net:/home/frs/project/rogsoft-cloudreve/
