@@ -30,14 +30,15 @@ jobs:
           GIT_EMAIL: ${{ secrets.GIT_EMAIL }}
         run: |
           python ./build.py
+          VERSION=$(cat ./*/version)
           if [ -n "$(git status --porcelain)" ]; then
             echo "Files are different, committing changes..."
             git config --global user.name "$GIT_NAME"
             git config --global user.email "$GIT_EMAIL"
             git add .
-            git commit -m "Upd ver at $(date '+%Y-%m-%d %H:%M:%S')"
+            git commit -m "Upd ver to $VERSION at $(date '+%Y-%m-%d %H:%M:%S')"
             git push
-            python ./.github/release.py --ver "$(cat ./*/version)" --token "$GIT_TOKEN"
+            python ./.github/release.py --ver "$VERSION" --token "$GIT_TOKEN"
           else
             echo "Files are the same, no changes."
           fi
@@ -59,16 +60,16 @@ jobs:
           SF_PASS: ${{ secrets.SF_PASS }}
         run: |
           python ./build.py
+          VERSION=$(cat ./*/version)
           if [ -n "$(git status --porcelain)" ]; then
             echo "Files are different, committing changes..."
             git config --global user.name "$GIT_NAME"
             git config --global user.email "$GIT_EMAIL"
             git add .
-            git commit -m "Upd ver at $(date '+%Y-%m-%d %H:%M:%S')"
+            git commit -m "Upd ver to $VERSION at $(date '+%Y-%m-%d %H:%M:%S')"
             git push
           else
             echo "Files are the same, no changes."
           fi
-          VERSION=$(cat ./*/version)
           python ./.github/release.py --ver "$VERSION" --token "$GIT_TOKEN"
           sshpass -p "$SF_PASS" rsync -avz -e "ssh -o StrictHostKeyChecking=no" cloudreve.tar.gz genius-society@frs.sourceforge.net:/home/frs/project/rogsoft-cloudreve/v"$VERSION"/
