@@ -15,13 +15,12 @@ permissions:
 
 jobs:
   job-on-schedule:
-    if: github.event_name == 'schedule'
+    if: github.event_name == 'schedule' || github.event_name == 'workflow_dispatch'
     runs-on: ubuntu-latest
     steps:
       # Step 1: 检出当前仓库代码
       - name: Checkout repository
         uses: actions/checkout@v5
-
       # Step 2: 发布至 GitHub
       - name: Check Binary Update
         env:
@@ -40,17 +39,22 @@ jobs:
             git push
             python ./.github/release.py --ver "$VERSION" --token "$GIT_TOKEN"
           else
-            echo "Files are the same, no changes."
+            diff_days=$(curl -s https://api.github.com/repos/Genius-Society/rogsoft-cloudreve/releases/latest | python3 -c "import sys,json,datetime;d=json.load(sys.stdin);p=datetime.datetime.strptime(d['published_at'],'%Y-%m-%dT%H:%M:%SZ').replace(tzinfo=datetime.timezone.utc);print((datetime.datetime.now(datetime.timezone.utc)-p).days)")
+            if [ "$diff_days" -gt 58 ]; then
+              python ./.github/release.py --ver "$VERSION" --token "$GIT_TOKEN"
+              echo "Avoid 60-day cron sleep: force-release regularly"
+            else
+              echo "Files are the same, no changes."
+            fi
           fi
 
   job-on-push:
-    if: github.event_name == 'push' || github.event_name == 'workflow_dispatch'
+    if: github.event_name == 'push'
     runs-on: ubuntu-latest
     steps:
       # Step 1: 检出当前仓库代码
       - name: Checkout repository
         uses: actions/checkout@v5
-
       # Step 2: 发布至 GitHub
       - name: Update Release
         env:
