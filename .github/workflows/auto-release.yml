@@ -39,8 +39,7 @@ jobs:
             git push
             python ./.github/release.py --ver "$VERSION" --token "$GIT_TOKEN"
           else
-            pip install datetime
-            diff_days=$(curl -s https://api.github.com/repos/Genius-Society/rogsoft-cloudreve/releases/latest | python3 -c "import sys,json,datetime;d=json.load(sys.stdin);p=datetime.datetime.strptime(d['published_at'],'%Y-%m-%dT%H:%M:%SZ').replace(tzinfo=datetime.timezone.utc);print((datetime.datetime.now(datetime.timezone.utc)-p).days)")
+            diff_days=$(curl -s https://api.github.com/repos/Genius-Society/rogsoft_cloudreve/releases/latest | python3 -c "import sys,json,datetime;d=json.load(sys.stdin);p=datetime.datetime.strptime(d['published_at'],'%Y-%m-%dT%H:%M:%SZ').replace(tzinfo=datetime.timezone.utc);print((datetime.datetime.now(datetime.timezone.utc)-p).days)")
             if [ "$diff_days" -gt 58 ]; then
               python ./.github/release.py --ver "$VERSION" --token "$GIT_TOKEN"
               echo "Avoid 60-day cron sleep: force-release regularly"
