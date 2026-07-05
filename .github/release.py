@@ -1,4 +1,6 @@
 import os
+import time
+import random
 import hashlib
 import argparse
 import requests
@@ -21,8 +23,7 @@ class GitHubReleaseManager:
             "Content-Type": "application/octet-stream",
         }
 
-    def clean_release(self) -> str:
-        # 1. 先判断 tag 是否存在
+    def clean_release(self) -> str:  # 1. 先判断 tag 是否存在
         release_url = f"{self.endpoint}/releases"
         tag_url = f"{self.endpoint}/git/refs/tags/{self.ver}"
         response = requests.get(tag_url, headers=self.header)
@@ -30,8 +31,7 @@ class GitHubReleaseManager:
             print(f"Tag {self.ver} not found, nothing to delete.")
             return release_url
 
-        response.raise_for_status()
-        # 2. 判断 release 是否存在
+        response.raise_for_status()  # 2. 判断 release 是否存在
         response = requests.get(release_url, headers=self.header)
         response.raise_for_status()
         tag_release = None
@@ -119,6 +119,22 @@ class GitHubReleaseManager:
         )
         response.raise_for_status()
         print(f"🎉 {self.name} release has been published!")
+        return release_id
+
+    def check_release(self):
+        try:
+            response = requests.get(f"{self.endpoint}/releases/tags/{self.ver}")
+            response.raise_for_status()
+            return True
+
+        except Exception:
+            return False
+
+    def release(self):
+        self.publish_release()
+        while not self.check_release():
+            self.publish_release()
+            time.sleep(random.randint(3, 7))
 
 
 if __name__ == "__main__":
@@ -126,4 +142,4 @@ if __name__ == "__main__":
     parser.add_argument("--ver", required=True, help="Release version")
     parser.add_argument("--token", required=True, help="Your GitHub Access Token")
     args = parser.parse_args()
-    GitHubReleaseManager(args.ver, args.token).publish_release()
+    GitHubReleaseManager(args.ver, args.token).release()
