@@ -119,7 +119,6 @@ class GitHubReleaseManager:
         )
         response.raise_for_status()
         print(f"🎉 {self.name} release has been published!")
-        return release_id
 
     def check_release(self):
         try:
