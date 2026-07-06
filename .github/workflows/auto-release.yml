@@ -21,19 +21,20 @@ jobs:
       # Step 1: 检出当前仓库代码
       - name: Checkout repository
         uses: actions/checkout@v5
-      # Step 2: 发布至 GitHub
+      # Step 2: 配置 Git
+      - name: Configure Git
+        run: |
+          git config --global user.name "${{ secrets.GIT_NAME }}"
+          git config --global user.email "${{ secrets.GIT_EMAIL }}"
+      # Step 3: 发布至 GitHub
       - name: Check Binary Update
         env:
           GIT_TOKEN: ${{ secrets.GIT_TOKEN }}
-          GIT_NAME: ${{ secrets.GIT_NAME }}
-          GIT_EMAIL: ${{ secrets.GIT_EMAIL }}
         run: |
           python ./build.py
           VERSION=$(cat ./*/version)
           if [ -n "$(git status --porcelain)" ]; then
             echo "Files are different, committing changes..."
-            git config --global user.name "$GIT_NAME"
-            git config --global user.email "$GIT_EMAIL"
             git add .
             git commit -m "Upd ver to $VERSION at $(date '+%Y-%m-%d %H:%M:%S')"
             git push
@@ -55,20 +56,21 @@ jobs:
       # Step 1: 检出当前仓库代码
       - name: Checkout repository
         uses: actions/checkout@v5
-      # Step 2: 发布至 GitHub
+      # Step 2: 配置 Git
+      - name: Configure Git
+        run: |
+          git config --global user.name "${{ secrets.GIT_NAME }}"
+          git config --global user.email "${{ secrets.GIT_EMAIL }}"
+      # Step 3: 发布至 GitHub
       - name: Update Release
         env:
           GIT_TOKEN: ${{ secrets.GIT_TOKEN }}
-          GIT_NAME: ${{ secrets.GIT_NAME }}
-          GIT_EMAIL: ${{ secrets.GIT_EMAIL }}
           SF_PASS: ${{ secrets.SF_PASS }}
         run: |
           python ./build.py
           VERSION=$(cat ./*/version)
           if [ -n "$(git status --porcelain)" ]; then
             echo "Files are different, committing changes..."
-            git config --global user.name "$GIT_NAME"
-            git config --global user.email "$GIT_EMAIL"
             git add .
             git commit -m "Upd ver to $VERSION at $(date '+%Y-%m-%d %H:%M:%S')"
             git push
