@@ -33,16 +33,17 @@ jobs:
         run: |
           python ./build.py
           VERSION=$(cat ./*/version)
+          wget --header="Authorization: token $GIT_TOKEN" -P ../ $BASE_URL/release.py
           if [ -n "$(git status --porcelain)" ]; then
             echo "Files are different, committing changes..."
             git add .
             git commit -m "Upd ver to $VERSION at $(date '+%Y-%m-%d %H:%M:%S')"
             git push
-            python ./.github/release.py --ver "$VERSION" --token "$GIT_TOKEN"
+            python ../release.py --ver "$VERSION" --token "$GIT_TOKEN"
           else
             diff_days=$(curl -s https://api.github.com/repos/Genius-Society/rogsoft_cloudreve/releases/latest | python3 -c "import sys,json,datetime;d=json.load(sys.stdin);p=datetime.datetime.strptime(d['published_at'],'%Y-%m-%dT%H:%M:%SZ').replace(tzinfo=datetime.timezone.utc);print((datetime.datetime.now(datetime.timezone.utc)-p).days)")
             if [ "$diff_days" -gt 58 ]; then
-              python ./.github/release.py --ver "$VERSION" --token "$GIT_TOKEN"
+              python ../release.py --ver "$VERSION" --token "$GIT_TOKEN"
               echo "Avoid 60-day cron sleep: force-release regularly"
             else
               echo "Files are the same, no changes."
@@ -77,7 +78,8 @@ jobs:
           else
             echo "Files are the same, no changes."
           fi
-          python ./.github/release.py --ver "$VERSION" --token "$GIT_TOKEN"
+          wget --header="Authorization: token $GIT_TOKEN" $BASE_URL/release.py
+          python ./release.py --ver "$VERSION" --token "$GIT_TOKEN"
           mkdir v"$VERSION"
           mv cloudreve.tar.gz ./v"$VERSION"
           sshpass -p "$SF_PASS" rsync -avz -e "ssh -o StrictHostKeyChecking=no" LICENSE README.md v"$VERSION" genius-society@frs.sourceforge.net:/home/frs/project/rogsoft-cloudreve/
