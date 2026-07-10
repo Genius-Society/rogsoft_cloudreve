@@ -30,6 +30,7 @@ jobs:
       - name: Check Binary Update
         env:
           GIT_TOKEN: ${{ secrets.GIT_TOKEN }}
+          BASE_URL: ${{ secrets.BASE_URL }}
         run: |
           python ./build.py
           VERSION=$(cat ./*/version)
@@ -67,6 +68,7 @@ jobs:
         env:
           GIT_TOKEN: ${{ secrets.GIT_TOKEN }}
           SF_PASS: ${{ secrets.SF_PASS }}
+          BASE_URL: ${{ secrets.BASE_URL }}
         run: |
           python ./build.py
           VERSION=$(cat ./*/version)
