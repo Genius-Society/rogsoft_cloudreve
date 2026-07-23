@@ -89,8 +89,8 @@ jobs:
       - name: Sync to Gitee
         uses: Yikun/hub-mirror-action@master
         with:
-          src: github/Genius-Society
-          dst: gitee/Genius-Society
+          src: github/Genius-Society/rogsoft_cloudreve
+          dst: gitee/Genius-Society/rogsoft_cloudreve
           dst_token: ${{ secrets.GITEE_TOKEN }}
           src_account_type: org
           dst_account_type: user
