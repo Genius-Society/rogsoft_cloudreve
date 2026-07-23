@@ -50,6 +50,22 @@ jobs:
               echo "Files are the same, no changes."
             fi
           fi
+      # Step 4: 同步至 Gitee
+      - name: Sync to Gitee
+        env:
+          GITEE_TOKEN: ${{ secrets.GITEE_TOKEN }}
+        run: |
+          git clone https://Genius-Society:$GITEE_TOKEN@gitee.com/Genius-Society/rogsoft_cloudreve.git ../gitee_repo
+          rm -rf .git
+          cp -rf ../gitee_repo/.git ./
+          if [ -n "$(git status --porcelain)" ]; then
+            echo "Files are different, committing changes..."
+            git add .
+            git commit -m "Auto sync at $(date '+%Y-%m-%d %H:%M:%S')"
+            git push
+          else
+            echo "Files are the same, no changes."
+          fi
 
   job-on-push:
     if: github.event_name == 'push'
@@ -85,19 +101,3 @@ jobs:
           mkdir v"$VERSION"
           mv cloudreve.tar.gz ./v"$VERSION"
           sshpass -p "$SF_PASS" rsync -avz -e "ssh -o StrictHostKeyChecking=no" LICENSE README.md v"$VERSION" genius-society@frs.sourceforge.net:/home/frs/project/rogsoft-cloudreve/
-      # Step 4: 同步至 Gitee
-      - name: Sync to Gitee
-        env:
-          GITEE_TOKEN: ${{ secrets.GITEE_TOKEN }}
-        run: |
-          git clone https://Genius-Society:$GITEE_TOKEN@gitee.com/Genius-Society/rogsoft_cloudreve.git ../gitee_repo
-          rm -rf .git
-          cp -rf ../gitee_repo/.git ./
-          if [ -n "$(git status --porcelain)" ]; then
-            echo "Files are different, committing changes..."
-            git add .
-            git commit -m "Auto sync at $(date '+%Y-%m-%d %H:%M:%S')"
-            git push
-          else
-            echo "Files are the same, no changes."
-          fi
