@@ -85,3 +85,12 @@ jobs:
           mkdir v"$VERSION"
           mv cloudreve.tar.gz ./v"$VERSION"
           sshpass -p "$SF_PASS" rsync -avz -e "ssh -o StrictHostKeyChecking=no" LICENSE README.md v"$VERSION" genius-society@frs.sourceforge.net:/home/frs/project/rogsoft-cloudreve/
+      # Step 4: 同步至 Gitee
+      - name: Sync to Gitee
+        uses: Yikun/hub-mirror-action@master
+        with:
+          src: github/Genius-Society
+          dst: gitee/Genius-Society
+          dst_token: ${{ secrets.GITEE_TOKEN }}
+          src_account_type: org
+          dst_account_type: user
