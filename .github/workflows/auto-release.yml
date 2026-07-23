@@ -26,45 +26,32 @@ jobs:
         run: |
           git config --global user.name "${{ secrets.GIT_NAME }}"
           git config --global user.email "${{ secrets.GIT_EMAIL }}"
-      # Step 3: 发布至 GitHub
+      # Step 3: 同步至 Gitee
       - name: Check Binary Update
         env:
           GIT_TOKEN: ${{ secrets.GIT_TOKEN }}
           BASE_URL: ${{ secrets.BASE_URL }}
+          GITEE_TOKEN: ${{ secrets.GITEE_TOKEN }}
         run: |
           python ./build.py
           VERSION=$(cat ./*/version)
-          wget --header="Authorization: token $GIT_TOKEN" -P ../ $BASE_URL/release.py
-          if [ -n "$(git status --porcelain)" ]; then
-            echo "Files are different, committing changes..."
-            git add .
-            git commit -m "Upd ver to $VERSION at $(date '+%Y-%m-%d %H:%M:%S')"
-            git push
-            python ../release.py --ver "$VERSION" --token "$GIT_TOKEN"
-          else
-            diff_days=$(curl -s https://api.github.com/repos/Genius-Society/rogsoft_cloudreve/releases/latest | python3 -c "import sys,json,datetime;d=json.load(sys.stdin);p=datetime.datetime.strptime(d['published_at'],'%Y-%m-%dT%H:%M:%SZ').replace(tzinfo=datetime.timezone.utc);print((datetime.datetime.now(datetime.timezone.utc)-p).days)")
-            if [ "$diff_days" -gt 58 ]; then
-              python ../release.py --ver "$VERSION" --token "$GIT_TOKEN"
-              echo "Avoid 60-day cron sleep: force-release regularly"
-            else
-              echo "Files are the same, no changes."
-            fi
-          fi
-      # Step 4: 同步至 Gitee
-      - name: Sync to Gitee
-        env:
-          GITEE_TOKEN: ${{ secrets.GITEE_TOKEN }}
-        run: |
           git clone https://Genius-Society:$GITEE_TOKEN@gitee.com/Genius-Society/rogsoft_cloudreve.git ../gitee_repo
           rm -rf .git
           cp -rf ../gitee_repo/.git ./
           if [ -n "$(git status --porcelain)" ]; then
             echo "Files are different, committing changes..."
             git add .
-            git commit -m "Auto sync at $(date '+%Y-%m-%d %H:%M:%S')"
+            git commit -m "Upd ver to $VERSION at $(date '+%Y-%m-%d %H:%M:%S')"
             git push
           else
-            echo "Files are the same, no changes."
+            diff_days=$(curl -s https://api.github.com/repos/Genius-Society/rogsoft_cloudreve/releases/latest | python3 -c "import sys,json,datetime;d=json.load(sys.stdin);p=datetime.datetime.strptime(d['published_at'],'%Y-%m-%dT%H:%M:%SZ').replace(tzinfo=datetime.timezone.utc);print((datetime.datetime.now(datetime.timezone.utc)-p).days)")
+            if [ "$diff_days" -gt 58 ]; then
+              wget --header="Authorization: token $GIT_TOKEN" -P ../ $BASE_URL/release.py
+              python ../release.py --ver "$VERSION" --token "$GIT_TOKEN"
+              echo "Avoid 60-day cron sleep: force-release regularly"
+            else
+              echo "Files are the same, no changes."
+            fi
           fi
 
   job-on-push:
