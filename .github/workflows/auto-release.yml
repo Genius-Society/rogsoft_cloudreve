@@ -91,7 +91,7 @@ jobs:
         with:
           src: github/Genius-Society
           dst: gitee/Genius-Society
-          dst_token: ${{ secrets.GITEE_TOKEN }}
+          dst_key: ${{ secrets.GITEE_PRIVATE_KEY }}
           static_list: "rogsoft_cloudreve"
           src_account_type: org
           dst_account_type: user
