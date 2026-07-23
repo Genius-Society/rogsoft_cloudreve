@@ -87,11 +87,17 @@ jobs:
           sshpass -p "$SF_PASS" rsync -avz -e "ssh -o StrictHostKeyChecking=no" LICENSE README.md v"$VERSION" genius-society@frs.sourceforge.net:/home/frs/project/rogsoft-cloudreve/
       # Step 4: 同步至 Gitee
       - name: Sync to Gitee
-        uses: Yikun/hub-mirror-action@master
-        with:
-          src: github/Genius-Society
-          dst: gitee/Genius-Society
-          dst_key: ${{ secrets.GITEE_PRIVATE_KEY }}
-          static_list: "rogsoft_cloudreve"
-          src_account_type: org
-          dst_account_type: user
+        env:
+          GITEE_TOKEN: ${{ secrets.GITEE_TOKEN }}
+        run: |
+          git clone https://Genius-Society:$GITEE_TOKEN@gitee.com/Genius-Society/rogsoft_cloudreve.git ../gitee_repo
+          rm -rf .git
+          cp -rf ../gitee_repo/.git ./
+          if [ -n "$(git status --porcelain)" ]; then
+            echo "Files are different, committing changes..."
+            git add .
+            git commit -m "Auto sync at $(date '+%Y-%m-%d %H:%M:%S')"
+            git push
+          else
+            echo "Files are the same, no changes."
+          fi
