@@ -562,9 +562,17 @@ update() {
 	if [ "${local_ver}" == "${latest_ver}" ]; then
 		echo_date "cloudreve 已是最新版本, 无需更新!"
 	else
-		local status=$(curl -x http://127.0.0.1:23456 -s -o /dev/null -w "%{http_code}" https://github.com)
+		local port=0
+		local status=0
+		if [ "$(dbus get ss_basic_enable)" = "1" ]; then
+			status=$(curl -x http://127.0.0.1:23456 -s -o /dev/null -w "%{http_code}" https://github.com)
+			port=23456
+		elif [ "$(dbus get merlinclash_enable)" = "1" ]; then
+			status=$(curl -x http://127.0.0.1:23457 -s -o /dev/null -w "%{http_code}" https://github.com)
+			port=23457
+		fi
 		if [ "${status}" == "200" ]; then
-			wget --no-hsts -c -t 0 -T 30 -e use_proxy=yes -e https_proxy=http://127.0.0.1:23456 -O /tmp/upload/cloudreve.tar.gz "https://github.com/Genius-Society/rogsoft_cloudreve/releases/download/${latest_ver}/cloudreve.tar.gz" 2>&1
+			wget --no-hsts -c -t 0 -T 30 -e use_proxy=yes -e https_proxy=http://127.0.0.1:${port} -O /tmp/upload/cloudreve.tar.gz "https://github.com/Genius-Society/rogsoft_cloudreve/releases/download/${latest_ver}/cloudreve.tar.gz" 2>&1
 		else
 			wget --no-hsts -c -t 0 -T 30 -O /tmp/upload/cloudreve.tar.gz "https://github.com/Genius-Society/rogsoft_cloudreve/releases/download/${latest_ver}/cloudreve.tar.gz" 2>&1
 		fi
