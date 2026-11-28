@@ -9,9 +9,11 @@ from pathlib import Path
 
 
 def latest_release(repo):
-    req = urllib.request.Request(f"https://api.github.com/repos/{repo}/releases/latest")
-    with urllib.request.urlopen(req) as resp:
-        data: dict = json.load(resp)
+    response = urllib.request.Request(
+        f"https://api.github.com/repos/{repo}/releases/latest"
+    )
+    with urllib.request.urlopen(response) as json_resp:
+        data: dict = json.load(json_resp)
 
     ver = data["tag_name"]
     return ver, f"https://github.com/{repo}/releases/download/{ver}"
