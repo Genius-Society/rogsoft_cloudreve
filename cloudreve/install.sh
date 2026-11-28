@@ -136,6 +136,7 @@ install_now() {
 
 	# dbus value
 	echo_date "设置插件默认参数..."
+	dbus set ${module}_md5="$(md5sum /tmp/${module}.tar.gz | awk '{print $1}')"
 	dbus set ${module}_version="${PLVER}"
 	dbus set softcenter_module_${module}_version="${PLVER}"
 	dbus set softcenter_module_${module}_install="1"

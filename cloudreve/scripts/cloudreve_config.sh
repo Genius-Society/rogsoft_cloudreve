@@ -302,17 +302,16 @@ start_process() {
 	if [ "${cloudreve_watchdog}" == "1" ]; then
 		echo_date "🟠启动 cloudreve 进程, 开启进程实时守护..."
 		mkdir -p /koolshare/perp/cloudreve
-		cat >/koolshare/perp/cloudreve/rc.main <<-EOF
-			#!/bin/sh
-			source /koolshare/scripts/base.sh
-			CMD="${CloudreveBaseDir}/cloudreve"
-			if test \${1} = 'start' ; then
-				exec >${CLOUDREVE_RUN_LOG} 2>&1
-				exec \$CMD
-			fi
-			exit 0
-
-		EOF
+		{
+			printf '%s\n' '#!/bin/sh'
+			printf '%s\n' 'source /koolshare/scripts/base.sh'
+			printf '%s\n' "CMD=\"${CloudreveBaseDir}/cloudreve\""
+			printf '%s\n' "if test \${1} = 'start' ; then"
+			printf '%s\n' "    exec >${CLOUDREVE_RUN_LOG} 2>&1"
+			printf '%s\n' "    exec \$CMD"
+			printf '%s\n' 'fi'
+			printf '%s\n' 'exit 0'
+		} >/koolshare/perp/cloudreve/rc.main
 		chmod +x /koolshare/perp/cloudreve/rc.main
 		chmod +t /koolshare/perp/cloudreve/
 		sync
@@ -553,33 +552,35 @@ check_status() {
 }
 
 check_ver() {
-	http_response $(curl -s https://raw.githubusercontent.com/Genius-Society/rogsoft_cloudreve/refs/heads/main/cloudreve/version)
+	local gitver=$(curl -fsSL -A 'Mozilla/5.0' 'https://api.github.com/repos/Genius-Society/rogsoft_cloudreve/releases/latest' | sed -n 's/.*"tag_name"[[:space:]]*:[[:space:]]*"\([^"]*\)".*/\1/p' | sed 's/^v//')
+	local gitmd5=$(curl -fsSL -A 'Mozilla/5.0' 'https://api.github.com/repos/Genius-Society/rogsoft_cloudreve/releases/latest' | sed -n 's/.*"body"[[:space:]]*:[[:space:]]*"[^"]*\([0-9a-fA-F]\{32\}\)[^"]*".*/\1/p')
+	http_response "${gitver}|${gitmd5}"
 }
 
 update() {
-	local local_ver=$(dbus get cloudreve_version)
-	local latest_ver=$(curl -s https://raw.githubusercontent.com/Genius-Society/rogsoft_cloudreve/refs/heads/main/cloudreve/version)
-	if [ "${local_ver}" == "${latest_ver}" ]; then
-		echo_date "cloudreve 已是最新版本, 无需更新!"
-	else
-		local port=0
-		local status=0
-		if [ "$(dbus get ss_basic_enable)" = "1" ]; then
-			status=$(curl -x http://127.0.0.1:23456 -s -o /dev/null -w "%{http_code}" https://github.com)
-			port=23456
-		elif [ "$(dbus get merlinclash_enable)" = "1" ]; then
-			status=$(curl -x http://127.0.0.1:23457 -s -o /dev/null -w "%{http_code}" https://github.com)
-			port=23457
-		fi
-		if [ "${status}" == "200" ]; then
-			wget --no-hsts -c -t 0 -T 30 -e use_proxy=yes -e https_proxy=http://127.0.0.1:${port} -O /tmp/upload/cloudreve.tar.gz "https://github.com/Genius-Society/rogsoft_cloudreve/releases/download/${latest_ver}/cloudreve.tar.gz" 2>&1
-		else
-			wget --no-hsts -c -t 0 -T 30 -O /tmp/upload/cloudreve.tar.gz "https://github.com/Genius-Society/rogsoft_cloudreve/releases/download/${latest_ver}/cloudreve.tar.gz" 2>&1
-		fi
-		dbus set soft_name=cloudreve.tar.gz
-		sh /koolshare/scripts/ks_tar_install.sh >/dev/null 2>&1
-		echo_date "cloudreve 插件已更新!"
+	echo_date "更新 Cloudreve 插件中..."
+	local status=0
+	local proxyPort=0
+	local latest_ver=$(curl -fsSL -A 'Mozilla/5.0' 'https://api.github.com/repos/Genius-Society/rogsoft_cloudreve/releases/latest' | sed -n 's/.*"tag_name"[[:space:]]*:[[:space:]]*"\([^"]*\)".*/\1/p' | sed 's/^v//')
+	if [ -z "$latest_ver" ]; then
+		echo_date "获取最新版本失败，取消更新!"
+		return 1
 	fi
+	if [ "$(dbus get ss_basic_enable)" == "1" ]; then
+		proxyPort=23456
+		status=$(curl -x http://127.0.0.1:${proxyPort} -s -o /dev/null -w "%{http_code}" https://github.com)
+	elif [ "$(dbus get merlinclash_enable)" == "1" ]; then
+		proxyPort=3333
+		status=$(curl -x http://127.0.0.1:${proxyPort} -s -o /dev/null -w "%{http_code}" https://github.com)
+	fi
+	if [ "${status}" == "200" ]; then
+		wget --no-hsts -c -t 0 -T 30 -e use_proxy=yes -e https_proxy=http://127.0.0.1:${proxyPort} -O /tmp/upload/cloudreve.tar.gz "https://github.com/Genius-Society/rogsoft_cloudreve/releases/download/${latest_ver}/cloudreve.tar.gz" 2>&1
+	else
+		wget --no-hsts -c -t 0 -T 30 -O /tmp/upload/cloudreve.tar.gz "https://github.com/Genius-Society/rogsoft_cloudreve/releases/download/${latest_ver}/cloudreve.tar.gz" 2>&1
+	fi
+	dbus set soft_name=cloudreve.tar.gz
+	sh /koolshare/scripts/ks_tar_install.sh >/dev/null 2>&1
+	echo_date "Cloudreve 插件已更新!"
 }
 
 case $1 in
